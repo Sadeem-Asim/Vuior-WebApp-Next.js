@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useUserAssets } from "@/context/userSpecificAssetsContext";
 import CurrencyFormat from "react-currency-format";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 const CalendarBox = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -14,32 +14,29 @@ const CalendarBox = () => {
   const currentYear = currentDate.getFullYear();
   const upcomingBills = getUpcomingBillsByMonth(userBills);
 
-  useEffect(() => {
-    console.log("zaaalim,meow",
-upcomingBills
-)
-    if (!upcomingBills?.currentYear?.currentMonth ) {
-      // Find the first month in upcomingBills[currentYear] and navigate to it
-      const upcomingMonths = Object.keys(upcomingBills[currentYear] || {});
-      if (upcomingMonths.length > 0) {
-        const firstAvailableMonth = upcomingMonths[0];
-        const targetMonthIndex = new Date(
-          `${firstAvailableMonth} 1, ${currentYear}`
-        ).getMonth();
-        const currentMonthIndex = currentDate.getMonth();
-        const monthDifference = targetMonthIndex - currentMonthIndex;
+  // useEffect(() => {
+  //   if (!upcomingBills[currentYear][currentMonth]) {
+  //     // Find the first month in upcomingBills[currentYear] and navigate to it
+  //     const upcomingMonths = Object.keys(upcomingBills[currentYear] || {});
+  //     if (upcomingMonths.length > 0 || !upcomingMonths) {
+  //       const firstAvailableMonth = upcomingMonths[0];
+  //       const targetMonthIndex = new Date(
+  //         `${firstAvailableMonth} 1, ${currentYear}`
+  //       ).getMonth();
+  //       const currentMonthIndex = currentDate.getMonth();
+  //       const monthDifference = targetMonthIndex - currentMonthIndex;
 
-        if (monthDifference !== 0) {
-          navigateMonth(monthDifference);
-        }
-      }
-    }
-  }, []);
+  //       if (monthDifference !== 0) {
+  //         navigateMonth(monthDifference);
+  //       }
+  //     }
+  //   }
+  // }, []);
 
   // Function to handle month navigation
   const navigateMonth = (direction: any) => {
     const newDate = new Date(currentDate);
-    newDate.setMonth(currentDate?.getMonth() + direction);
+    newDate.setMonth(currentDate.getMonth() + direction);
     setCurrentDate(newDate);
   };
   // Function to handle year navigation
@@ -62,17 +59,17 @@ upcomingBills
   const totalDaysInMonth = getDaysInMonth(currentDate);
   return (
     <>
-      <div className="w-full max-w-full bg-white shadow-1 dark:bg-gray-dark dark:shadow-card ">
+      <div className="w-full max-w-full  bg-white shadow-1 dark:bg-gray-dark dark:shadow-card ">
         <div className="flex rounded-t-[10px] justify-between items-center p-4  text-white  bg-button-gpt-hover">
           <div className="flex gap-2">
             <button
-              className="px-3 py-1 rounded bg-button-gpt hover:bg-opacity-90"
+              className="px-3 py-1 bg-button-gpt rounded hover:bg-opacity-90"
               onClick={() => navigateYear(-1)}
             >
               « Year
             </button>
             <button
-              className="px-3 py-1 rounded bg-button-gpt hover:bg-opacity-90"
+              className="px-3 py-1 bg-button-gpt rounded hover:bg-opacity-90"
               onClick={() => navigateMonth(-1)}
             >
               « Month
@@ -84,13 +81,13 @@ upcomingBills
           </span>
           <div className="flex gap-2">
             <button
-              className="px-3 py-1 rounded bg-button-gpt hover:bg-opacity-90"
+              className="px-3 py-1 bg-button-gpt rounded hover:bg-opacity-90"
               onClick={() => navigateMonth(1)}
             >
               Month »
             </button>
             <button
-              className="px-3 py-1 rounded bg-button-gpt hover:bg-opacity-90"
+              className="px-3 py-1 bg-button-gpt rounded hover:bg-opacity-90"
               onClick={() => navigateYear(1)}
             >
               Year »
@@ -100,8 +97,8 @@ upcomingBills
 
         <table className="w-full">
           <thead>
-            <tr className="grid grid-cols-7 text-white bg-primary">
-              <th className="flex items-center justify-center p-1 font-medium bg-button-gpt h-15 text-body-xs sm:text-base xl:p-5">
+            <tr className="grid grid-cols-7  bg-primary text-white">
+              <th className="bg-button-gpt flex h-15 items-center justify-center  p-1 text-body-xs font-medium sm:text-base xl:p-5">
                 <span className="hidden lg:block"> Sunday </span>
                 <span className="block lg:hidden"> Sun </span>
               </th>

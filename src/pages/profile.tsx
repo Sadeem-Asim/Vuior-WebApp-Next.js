@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
+
 import { useAuth } from "../hooks/useAuth";
 import { storage, db } from "../lib/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -8,6 +9,8 @@ import { Button } from "@nextui-org/button";
 import { useToast } from "../hooks/use-toast";
 import CurrencyFormat from "react-currency-format";
 import { Autocomplete, LoadScript } from "@react-google-maps/api";
+
+const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const ProfilePage: React.FC = () => {
   const { user }: any = useAuth();
   const { toast } = useToast();
@@ -152,7 +155,7 @@ const ProfilePage: React.FC = () => {
   return (
     <LoadScript
       id="script-loader"
-      googleMapsApiKey="AIzaSyATgE6Eg55jmiSxIC4G8f34pfrGhGkVkP0"
+      googleMapsApiKey={apiKey}
       libraries={["places"]}
     >
       <div className="flex flex-col items-center justify-center min-h-screen bg-white">
