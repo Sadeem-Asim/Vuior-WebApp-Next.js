@@ -10,7 +10,7 @@ const TopHeader = () => {
               className="w-full max-w-5"
             />
             <p className="text-[10px] sm:text-base">
-              Vuior HQ, 123 Innovation Lane, Baltimore, MD
+              Vuior HQ, 1207 Delaware Ave #3968, Wilmington, DE 19806
             </p>
           </div>
           <div className="font-poppins font-medium flex items-center gap-2">

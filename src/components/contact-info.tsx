@@ -59,7 +59,7 @@ const ContactInfo = () => {
             />
             <InfoCard
               imgSrc="/assets/icons/business.png"
-              linkText="Vuior HQ, 123 Innovation Lane, Baltimore, MD"
+              linkText="Vuior HQ, 1207 Delaware Ave #3968, Wilmington, DE 19806"
               href=""
               label="Address"
             />

@@ -13,13 +13,31 @@ const Footer = () => {
             <div className="mt-[40px]">
               <div className="flex items-end gap-[30px] mt-[30px]">
                 <div className="cursor-pointer">
-                  <img src="/assets/icons/twitter.png" alt="twitter" />
+                  <a
+                    href="https://www.facebook.com/profile.php?id=61557178921559"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img src="/assets/icons/twitter.png" alt="twitter" />
+                  </a>
                 </div>
                 <div className="cursor-pointer">
-                  <img src="/assets/icons/instgram.png" alt="instagram" />
+                  <a
+                    href="https://www.instagram.com/vuiorhq"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img src="/assets/icons/instgram.png" alt="instagram" />
+                  </a>
                 </div>
                 <div className="cursor-pointer">
-                  <img src="/assets/icons/linkedin.png" alt="linkedin" />
+                  <a
+                    href="https://www.linkedin.com/company/vuior-hq"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img src="/assets/icons/linkedin.png" alt="linkedin" />
+                  </a>
                 </div>
               </div>
             </div>

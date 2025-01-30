@@ -30,7 +30,7 @@ const ContactUs = () => {
                   />
                   <GetHelpCard
                     header="Address"
-                    content="Vuior HQ, 123 Innovation Lane, Baltimore, MD"
+                    content="Vuior HQ, 1207 Delaware Ave #3968, Wilmington, DE 19806"
                     icon={Building2Icon}
                   />
                   {/* <GetHelpCard

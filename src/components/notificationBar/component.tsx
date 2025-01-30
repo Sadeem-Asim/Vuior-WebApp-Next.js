@@ -1,52 +1,48 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
-import { FaBell } from "react-icons/fa"; // Import bell icon from react-icons
+import React from "react";
+// import { FaBell } from "react-icons/fa"; // Import bell icon from react-icons
 import Avatar from "../avatar";
 import { useAuth } from "@/hooks/useAuth";
 // import { db } from "../../lib/firebaseConfig"; // import the Firebase configuration
 // import { doc, getDoc } from "firebase/firestore"; // Import Firestore methods
 import { useNavigate } from "react-router-dom";
 const DashboardHeader: React.FC = () => {
-  const [notifications, setNotifications] = useState<string[]>([]);
-  const [showNotifications, setShowNotifications] = useState<boolean>(false);
+  // const [notifications, setNotifications] = useState<string[]>([]);
+  // const [showNotifications, setShowNotifications] = useState<boolean>(false);
   // const [fuser, setFUser] = useState<any>(null);
   const navigate = useNavigate();
   const { user }: any = useAuth();
   console.log("AUTH:", user);
 
-  const sampleNotifications = [
-    "Payment for Order #1234 received. Reward: 10% off",
-    "New reward available! Earn a discount for early payments.",
-    "Reminder: Make a payment before the due date to earn rewards.",
-  ];
+  // const sampleNotifications = [
+  //   "Payment for Order #1234 received. Reward: 10% off",
+  //   "New reward available! Earn a discount for early payments.",
+  //   "Reminder: Make a payment before the due date to earn rewards.",
+  // ];
 
-  const handleBellClick = () => {
-    // Show the notifications box
-    setShowNotifications(!showNotifications);
+  // const handleBellClick = () => {
+  //   // Show the notifications box
+  //   setShowNotifications(!showNotifications);
 
-    // Simulate receiving notifications (can be replaced with API calls)
-    setNotifications(sampleNotifications);
+  //   // Simulate receiving notifications (can be replaced with API calls)
+  //   setNotifications(sampleNotifications);
 
-    // Hide the notifications after 10 seconds
-    setTimeout(() => {
-      setShowNotifications(false);
-      setNotifications([]); // Clear notifications after they disappear
-    }, 5000); // 10 seconds
-  };
+  //   // Hide the notifications after 10 seconds
+  //   setTimeout(() => {
+  //     setShowNotifications(false);
+  //     setNotifications([]); // Clear notifications after they disappear
+  //   }, 5000); // 10 seconds
+  // };
 
   return (
     <div className="flex flex-row justify-around ">
-      <div
+      {/* <div
         onClick={handleBellClick}
         className="flex items-center justify-between px-4 ml-3 mr-2 text-white bg-red-600 rounded-full cursor-pointer"
       >
-        {/* <h1 className='text-xl font-bold'></h1> */}
-
-        {/* Bell Icon */}
         <div className="relative">
           <FaBell size={20} className="cursor-pointer" />
 
-          {/* Notification Box */}
           {showNotifications && (
             <div
               className="absolute z-50 p-4 mt-2 text-black transition duration-300 bg-white rounded-lg shadow-lg w-72 right-7 animate-fadeIn"
@@ -68,7 +64,7 @@ const DashboardHeader: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
       <div
         style={{
           cursor: "pointer",

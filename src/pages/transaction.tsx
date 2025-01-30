@@ -46,8 +46,8 @@ const Transaction = () => {
   const subtotal = calculateTotalBills();
   const discount = savingsForBill.totalSavings;
   const total = useMemo(() => {
-    return subtotal - discount - creditApplied;
-  }, [subtotal, discount, creditApplied]);
+    return subtotal - creditApplied;
+  }, [subtotal, creditApplied]);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -285,6 +285,7 @@ const OrderSummary: React.FC<any> = ({
   percentageApplied,
   makePayment,
 }) => {
+  console.log(discount);
   // console.log(visibleItems);
   // Convert unifiedDueDate to a DateTime object for comparison
   const dueDate = unifiedDueDate ? DateTime.fromISO(unifiedDueDate) : null;
@@ -331,13 +332,21 @@ const OrderSummary: React.FC<any> = ({
           </div>
         )}
         {percentageApplied !== 0 && (
-          <div className="flex items-center justify-between py-2 border-b border-gray-300">
-            <span className="text-lg text-gray-700">Savings Applied</span>
-            <span className="text-lg text-gray-800">{percentageApplied}%</span>
-          </div>
+          <>
+            <div className="flex items-center justify-between py-2 border-b border-gray-300">
+              <span className="text-lg text-gray-700">Savings Applied</span>
+              <span className="text-lg text-gray-800">
+                {percentageApplied}%
+              </span>
+            </div>
+            <span className="text-lg text-green-500">
+              Savings achieved will be added to your credit
+            </span>
+          </>
         )}
-        <div className="flex items-center justify-between py-2 border-b border-gray-300">
-          <span className="text-lg text-gray-700">Discount</span>
+
+        {/* <div className="flex items-center justify-between py-2 border-b border-gray-300">
+          <span className="text-lg text-gray-700">Savings Achieved</span>
           <span className="text-lg text-green-500">
             <CurrencyFormat
               value={`-${
@@ -352,7 +361,7 @@ const OrderSummary: React.FC<any> = ({
               prefix={"$"}
             />
           </span>
-        </div>
+        </div> */}
         {creditApplied > 0 && (
           <div className="flex items-center justify-between py-2 border-b border-gray-300">
             <span className="text-lg text-gray-700">Credit </span>
