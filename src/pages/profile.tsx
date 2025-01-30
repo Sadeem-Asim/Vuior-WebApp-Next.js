@@ -8,12 +8,16 @@ import { doc, updateDoc } from "firebase/firestore";
 import { Button } from "@nextui-org/button";
 import { useToast } from "../hooks/use-toast";
 import CurrencyFormat from "react-currency-format";
-import { Autocomplete, LoadScript } from "@react-google-maps/api";
+import { Autocomplete, useJsApiLoader } from "@react-google-maps/api";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const ProfilePage: React.FC = () => {
   const { user }: any = useAuth();
   const { toast } = useToast();
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: apiKey,
+    libraries: ["places"],
+  });
   const [autocomplete, setAutocomplete] = useState<any>();
   // const [searchValue, setSearchValue] = useState("");
   const [profilePicture, setProfilePicture] = useState<string>("");
@@ -153,77 +157,78 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <LoadScript
-      id="script-loader"
-      googleMapsApiKey={apiKey}
-      libraries={["places"]}
-    >
-      <div className="flex flex-col items-center justify-center min-h-screen bg-white">
-        <div className="w-3/4 p-8 text-white rounded-lg shadow-lg md:w-2/3 lg:w-1/2 bg-gradient-to-br from-button-gpt to-black">
-          <h2 className="mb-6 text-4xl font-bold text-center">User Profile</h2>
+    // <LoadScript
+    //   id="script-loader"
+    //   googleMapsApiKey={apiKey}
+    //   libraries={["places"]}
+    // >
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+      <div className="w-3/4 p-8 text-white rounded-lg shadow-lg md:w-2/3 lg:w-1/2 bg-gradient-to-br from-button-gpt to-black">
+        <h2 className="mb-6 text-4xl font-bold text-center">User Profile</h2>
 
-          {/* Profile Picture */}
-          <div className="mb-6">
-            <label className="block mb-2 text-white">Profile Picture:</label>
-            <label
-              className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-gray-200 rounded-lg cursor-pointer hover:bg-gray-300"
-              htmlFor="profilePicture"
-            >
-              Upload Profile Picture
-            </label>
-            <input
-              type="file"
-              id="profilePicture"
-              accept="image/*"
-              className="hidden"
-              onChange={handleFileUpload}
+        {/* Profile Picture */}
+        <div className="mb-6">
+          <label className="block mb-2 text-white">Profile Picture:</label>
+          <label
+            className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-gray-200 rounded-lg cursor-pointer hover:bg-gray-300"
+            htmlFor="profilePicture"
+          >
+            Upload Profile Picture
+          </label>
+          <input
+            type="file"
+            id="profilePicture"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+          {profilePicture && (
+            <img
+              src={profilePicture}
+              alt="Profile"
+              className="w-32 h-32 mx-auto mt-4 rounded-full"
             />
-            {profilePicture && (
-              <img
-                src={profilePicture}
-                alt="Profile"
-                className="w-32 h-32 mx-auto mt-4 rounded-full"
-              />
-            )}
+          )}
+        </div>
+
+        {/* Input Fields */}
+        {[
+          {
+            label: "First Name",
+            value: firstName,
+            onChange: handleInputChange(setFirstName),
+          },
+          {
+            label: "Last Name",
+            value: lastName,
+            onChange: handleInputChange(setLastName),
+          },
+          {
+            label: "Email",
+            value: email,
+            onChange: handleInputChange(setEmail),
+          },
+
+          // {
+          //   label: "Address",
+          //   value: address,
+          //   onChange: handleInputChange(setAddress),
+          // },
+        ].map(({ label, value, onChange }) => (
+          <div key={label} className="mb-6">
+            <label className="block mb-2 text-white">{label}:</label>
+            <input
+              type="text"
+              value={value}
+              onChange={onChange}
+              className="w-full p-2 text-black border border-gray-300 rounded-lg bg-gray-50"
+            />
           </div>
+        ))}
 
-          {/* Input Fields */}
-          {[
-            {
-              label: "First Name",
-              value: firstName,
-              onChange: handleInputChange(setFirstName),
-            },
-            {
-              label: "Last Name",
-              value: lastName,
-              onChange: handleInputChange(setLastName),
-            },
-            {
-              label: "Email",
-              value: email,
-              onChange: handleInputChange(setEmail),
-            },
-
-            // {
-            //   label: "Address",
-            //   value: address,
-            //   onChange: handleInputChange(setAddress),
-            // },
-          ].map(({ label, value, onChange }) => (
-            <div key={label} className="mb-6">
-              <label className="block mb-2 text-white">{label}:</label>
-              <input
-                type="text"
-                value={value}
-                onChange={onChange}
-                className="w-full p-2 text-black border border-gray-300 rounded-lg bg-gray-50"
-              />
-            </div>
-          ))}
-
-          <div className="mb-6">
-            <label className="block mb-2 text-white">Address:</label>
+        <div className="mb-6">
+          <label className="block mb-2 text-white">Address:</label>
+          {isLoaded && (
             <Autocomplete
               onLoad={(autocompleteInstance) =>
                 setAutocomplete(autocompleteInstance)
@@ -238,91 +243,94 @@ const ProfilePage: React.FC = () => {
                 onChange={(e) => setAddress(e.target.value)}
               />
             </Autocomplete>
-          </div>
-          {/* {
+          )}
+        </div>
+        {/* {
             label: "Phone Number",
             value: phoneNo,
             onChange: handleInputChange(setPhoneNo),
           }, */}
 
-          <div className="mb-6">
-            <label className="block mb-2 text-white">Phone No:</label>
+        <div className="mb-6">
+          <label className="block mb-2 text-white">Phone No:</label>
 
-            <CurrencyFormat
-              type="text"
-              value={phoneNo}
-              onValueChange={(value) => {
-                setPhoneNo(value.formattedValue);
-              }}
-              className="w-full p-2 text-black border border-gray-300 rounded-lg bg-gray-50"
-              format="+1 (###) ###-####"
-              // mask="_"
-            />
-          </div>
-          {/* Date of Birth */}
-          <div className="mb-6">
-            <label className="block mb-2 text-white">Date of Birth:</label>
-            <input
-              type="date"
-              value={dob}
-              onChange={handleInputChange(setDob)}
-              className="w-full p-2 text-black border border-gray-300 rounded-lg bg-gray-50"
-            />
-          </div>
-
-          {/* Profile Link */}
-          <div className="mb-6">
-            <label className="block mb-2 text-white">Profile Link:</label>
-            <input
-              type="text"
-              value={profileLink}
-              readOnly
-              className="w-full p-2 text-black border border-gray-300 rounded-lg bg-gray-50"
-            />
-          </div>
-
-          {/* Save Changes */}
-          <div className="flex justify-end">
-            <Button
-              isLoading={isLoading}
-              disabled={isLoading}
-              onPress={handleSubmit}
-              className="bg-button-gpt hover:bg-button-gpt-hover"
-            >
-              {isLoading ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
+          <CurrencyFormat
+            type="text"
+            value={phoneNo}
+            onValueChange={(value) => {
+              setPhoneNo(value.formattedValue);
+            }}
+            className="w-full p-2 text-black border border-gray-300 rounded-lg bg-gray-50"
+            format="+1 (###) ###-####"
+            // mask="_"
+          />
         </div>
-        <div className="flex flex-row justify-center w-full mt-12 ">
-          <div className="w-1/2 px-10 py-3 text-center shadow-lg bg-gradient-to-br from-button-gpt to-black rounded-xl">
-            <h2 className="mb-4 mt-4 text-3xl font-semibold text-white">
-              Redeem Code
-            </h2>
-            <div className="px-6 py-2 font-mono text-lg font-bold tracking-wide text-gray-800 bg-gray-100 rounded-lg shadow-md">
-              <input
-                type="text"
-                placeholder="Enter Code here"
-                className="w-full px-8 py-2 text-gray-800 bg-gray-100 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:to-button-gpt focus:border-transparent"
-                onChange={(e) => {
-                  setRedeemCode(e.target.value);
-                }}
-              />
-            </div>
-            <div className="mt-8 mb-10">
-              <Button
-                children={redeemIsLoading ? "Redeeming..." : "Redeem Code"}
-                className="justify-center font-bold text-white hover:bg-button-gpt-hover bg-button-gpt"
-                isLoading={redeemIsLoading}
-                variant="faded"
-                type="submit"
-                onPress={redeemReferral}
-                disabled={redeemIsLoading}
-              />
-            </div>
+        {/* Date of Birth */}
+        <div className="mb-6">
+          <label className="block mb-2 text-white">Date of Birth:</label>
+          <input
+            type="date"
+            value={dob}
+            onChange={handleInputChange(setDob)}
+            className="w-full p-2 text-black border border-gray-300 rounded-lg bg-gray-50"
+            //  value=""
+            // min="1997-01-01" max="2030-12-31"
+          />
+        </div>
+
+        {/* Profile Link */}
+        <div className="mb-6">
+          <label className="block mb-2 text-white">Profile Link:</label>
+          <input
+            type="text"
+            value={profileLink}
+            readOnly
+            className="w-full p-2 text-black border border-gray-300 rounded-lg bg-gray-50"
+          />
+        </div>
+
+        {/* Save Changes */}
+        <div className="flex justify-end">
+          <Button
+            isLoading={isLoading}
+            disabled={isLoading}
+            onPress={handleSubmit}
+            className="bg-button-gpt hover:bg-button-gpt-hover"
+          >
+            {isLoading ? "Saving..." : "Save Changes"}
+          </Button>
+        </div>
+      </div>
+      <div className="flex flex-row justify-center w-full mt-12 ">
+        <div className="w-1/2 px-10 py-3 text-center shadow-lg bg-gradient-to-br from-button-gpt to-black rounded-xl">
+          <h2 className="mb-4 mt-4 text-3xl font-semibold text-white">
+            Redeem Code
+          </h2>
+          <div className="px-6 py-2 font-mono text-lg font-bold tracking-wide text-gray-800 bg-gray-100 rounded-lg shadow-md">
+            <input
+              type="text"
+              placeholder="Enter Code here"
+              className="w-full px-8 py-2 text-gray-800 bg-gray-100 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:to-button-gpt focus:border-transparent"
+              onChange={(e) => {
+                setRedeemCode(e.target.value);
+              }}
+            />
+          </div>
+          <div className="mt-8 mb-10">
+            <Button
+              children={redeemIsLoading ? "Redeeming..." : "Redeem Code"}
+              className="justify-center font-bold text-white hover:bg-button-gpt-hover bg-button-gpt"
+              isLoading={redeemIsLoading}
+              variant="faded"
+              type="submit"
+              onPress={redeemReferral}
+              disabled={redeemIsLoading}
+            />
           </div>
         </div>
       </div>
-    </LoadScript>
+    </div>
+    // </LoadScript>
   );
 };
 
