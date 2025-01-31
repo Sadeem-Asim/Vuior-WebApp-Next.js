@@ -484,8 +484,8 @@ const calculateSavingsForBills = (
     0
   );
 
-  totalSavings = totalAmount * 0.25;
-  percentageApplied = 25;
+  totalSavings = totalAmount * 0.15;
+  percentageApplied = 15;
 
   // Calculate unified due date as the latest due date among the bills
   const unifiedDueDate = bills
