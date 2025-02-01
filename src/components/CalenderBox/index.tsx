@@ -4,12 +4,15 @@ import { useState } from "react";
 import { useUserAssets } from "@/context/userSpecificAssetsContext";
 import CurrencyFormat from "react-currency-format";
 // import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CalendarBox = () => {
   const [currentDate, setCurrentDate] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1); // First day of the current month
   });
+  const navigate = useNavigate();
+
   const { userBills } = useUserAssets();
   const currentMonth = currentDate
     .toLocaleString("default", { month: "long" })
@@ -187,7 +190,11 @@ const CalendarBox = () => {
                                   md:visible
                                   md:w-[290%]
                                   md:mb-10
-                                  md:opacity-100"
+                                  md:opacity-100
+                                  cursor-pointer"
+                              onClick={() => {
+                                navigate("/bills");
+                              }}
                             >
                               <span className="event-name font-sm text-dark dark:text-white">
                                 {`Bill:${truncateString(markedBillName, 15)}`}

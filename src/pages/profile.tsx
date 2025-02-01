@@ -157,11 +157,6 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    // <LoadScript
-    //   id="script-loader"
-    //   googleMapsApiKey={apiKey}
-    //   libraries={["places"]}
-    // >
     <div className="flex flex-col items-center justify-center min-h-screen bg-white">
       <div className="w-3/4 p-8 text-white rounded-lg shadow-lg md:w-2/3 lg:w-1/2 bg-gradient-to-br from-button-gpt to-black">
         <h2 className="mb-6 text-4xl font-bold text-center">User Profile</h2>

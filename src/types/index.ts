@@ -11,7 +11,7 @@ export interface User {
   totalDocuments?: number;
   availableCredits?: number;
   profileLink?: string;
-  referralCode?: number;
+  referralCode?: string;
   redeemedReferralCode?: boolean;
 }
 
