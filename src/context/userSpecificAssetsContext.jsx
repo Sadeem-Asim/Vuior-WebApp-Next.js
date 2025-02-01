@@ -9,6 +9,7 @@ import {
   documentId,
   doc,
   updateDoc,
+  limit,
 } from "firebase/firestore";
 import { useAuth } from "@/hooks/useAuth"; // Import the useAuth hook for user information
 import { DateTime } from "luxon";
@@ -112,7 +113,8 @@ export const UserAssetsProvider = ({ children }) => {
     const creditsQuery = query(
       collection(db, "creditHistory"),
       where("userId", "==", user.id),
-      orderBy("date", "desc")
+      orderBy("date", "desc"),
+      limit(25)
     );
     const unsubscribeCredits = onSnapshot(creditsQuery, (querySnapshot) => {
       const credits = querySnapshot.docs.map((doc) => ({
@@ -126,7 +128,8 @@ export const UserAssetsProvider = ({ children }) => {
     const transactionsQuery = query(
       collection(db, "paymentHistory"),
       where("userId", "==", user.id),
-      orderBy("date", "desc")
+      orderBy("date", "desc"),
+      limit(25)
     );
     const unsubscribeTransactions = onSnapshot(
       transactionsQuery,

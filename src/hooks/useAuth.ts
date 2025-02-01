@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { useState } from "react";
 
 import { AuthContext } from "@/context/AuthContext";
@@ -32,22 +31,24 @@ export const useAuth = () => {
   }
 
   const registerFirebaseUser = async (
-    // email: string,
-    // password: string,
-    // firstName: string,
-    // lastName: string,
-    // phoneNo: string,
-    // timeZone: any
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    phoneNo: string,
+    timeZone: any,
   user:any
   ) => {
     setIsLoading(true);
     try {
+
       // const userCredential = await createUserWithEmailAndPassword(
       //   auth,
       //   email,
       //   password
       // );
       // const user = userCredential.user;
+
 
       // Create a user document in Firestore
       await setDoc(doc(db, "users", user.uid), {
@@ -60,12 +61,6 @@ export const useAuth = () => {
         timeZone: timeZone,
         createdAt: new Date(),
       });
-
-      // toast({
-      //   title: "Account Created Successfully.",
-      //   description: "Use your email and password to login again anytime.",
-      // });
-
       setIsLoading(false);
       return { success: true, user };
     } catch (error) {
