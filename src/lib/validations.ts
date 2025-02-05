@@ -16,8 +16,8 @@ export const RegisterUserSchema = z.object({
 
 export const ResetPasswordSchema = z.object({
   email: z.string().email(),
-  password: z.string().email(),
-  confirmPassword: z.string().email(),
+  // password: z.string().email(),
+  // confirmPassword: z.string().email(),
 });
 
 export const ContactUsSchema = z.object({

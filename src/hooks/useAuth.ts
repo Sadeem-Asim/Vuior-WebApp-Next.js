@@ -209,10 +209,12 @@ export const useAuth = () => {
   };
 
   const sendResetPasswordEmail = async (email: string) => {
-    const continueUrl = "http://localhost:5173/"; // Replace with your desired redirect URL
+    const continueUrl = import.meta.env.VITE_CONTINUE_URL  || "http://localhost:5173/"; // Replace with your desired redirect URL
 
     setIsLoading(true);
     try {
+
+      console.log("laari adday vs lori adda",email)
       await sendPasswordResetEmail(auth, email, { url: continueUrl });
 
       setIsLoading(false);
