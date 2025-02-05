@@ -16,8 +16,8 @@ export const RegisterUserSchema = z.object({
 
 export const ResetPasswordSchema = z.object({
   email: z.string().email(),
-  // password: z.string().email(),
-  // confirmPassword: z.string().email(),
+  password: z.string().min(6),
+  confirmPassword: z.string().min(6),
 });
 
 export const ContactUsSchema = z.object({
