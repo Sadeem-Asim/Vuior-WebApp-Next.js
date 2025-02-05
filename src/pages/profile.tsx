@@ -158,7 +158,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white">
-      <div className="w-3/4 p-8 text-white rounded-lg shadow-lg md:w-2/3 lg:w-1/2 bg-gradient-to-br from-button-gpt to-black">
+      <div className="w-full p-8 text-white rounded-lg shadow-lg md:w-2/3 lg:w-1/2 bg-gradient-to-br from-button-gpt to-black">
         <h2 className="mb-6 text-4xl font-bold text-center">User Profile</h2>
 
         {/* Profile Picture */}
@@ -296,8 +296,8 @@ const ProfilePage: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className="flex flex-row justify-center w-full mt-12 ">
-        <div className="w-1/2 px-10 py-3 text-center shadow-lg bg-gradient-to-br from-button-gpt to-black rounded-xl">
+      <div className="flex flex-row justify-center w-full mt-12">
+        <div className="px-10 py-3 text-center shadow-lg bg-gradient-to-br from-button-gpt to-black rounded-xl">
           <h2 className="mb-4 mt-4 text-3xl font-semibold text-white">
             Redeem Code
           </h2>

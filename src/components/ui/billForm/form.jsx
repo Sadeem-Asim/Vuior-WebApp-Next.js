@@ -149,6 +149,7 @@ export default function BillFormComponent({ bill = {}, update = false }) {
       setState({});
       const action = createBill;
       formData.user_id = user?.id;
+      formData.status = "unpaid";
       await action(formData);
       setState({ success: true });
       toast({

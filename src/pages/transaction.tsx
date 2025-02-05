@@ -8,6 +8,7 @@ import {
   Fade,
 } from "@mui/material";
 import CurrencyFormat from "react-currency-format";
+import { Button } from "@nextui-org/button";
 
 import { useBillPaymentContext } from "@/context/paymentBillsContext";
 import { useAuth } from "@/context/AuthContext";
@@ -141,6 +142,7 @@ const Transaction = () => {
                   productName={bill.name}
                   productPrice={bill.amount}
                   productStatus={bill.status}
+                  dueDate={bill.dueDate}
                   onRemove={() => {
                     removeBill(bill.id);
                   }}
@@ -234,46 +236,66 @@ const CartItem: React.FC<any> = ({
   productName,
   productPrice,
   productStatus,
+  dueDate,
   onRemove,
   selected,
   onClick,
-}) => (
-  <div
-    className={`w-full rounded-lg shadow-xl overflow-hidden bg-gray-50 text-lg ${
-      selected ? "border-4 border-blue-500" : ""
-    }`}
-    onClick={onClick}
-  >
-    <div className="flex p-4">
-      <div className="w-full pl-4">
-        <h3 className="text-2xl font-semibold text-gray-900">{productName}</h3>
-        <p className="mt-2 text-gray-600">{productStatus}</p>
-        <div className="flex justify-between mt-6">
-          <span className="text-2xl font-bold text-button-gpt">
-            <CurrencyFormat
-              value={`${
-                productPrice.toString().includes(".")
-                  ? productPrice.toLocaleString(undefined, {
-                      maximumFractionDigits: 2,
-                    })
-                  : `{${productPrice}}.00`
-              }`}
-              displayType={"text"}
-              thousandSeparator={true}
-              prefix={"$"}
-            />
-          </span>
-          <button
-            onClick={onRemove}
-            className="px-3 py-1 mr-3 text-white rounded-md bg-button-gpt hover:bg-red-600"
-          >
-            Remove
-          </button>
+}) => {
+  const errors = [];
+  const date = dueDate ? DateTime.fromISO(dueDate) : null;
+  const today = DateTime.now();
+  if (date && today > date) {
+    errors.push("The payment is past the due date.");
+  }
+  // console.log(errors);
+
+  return (
+    <div
+      className={`w-full rounded-lg shadow-xl overflow-hidden bg-gray-50 text-lg ${
+        selected ? "border-4 border-blue-500" : ""
+      }`}
+      onClick={onClick}
+    >
+      <div className="flex p-4">
+        <div className="w-full pl-4">
+          <h3 className="text-2xl font-semibold text-gray-900">
+            {productName}
+          </h3>
+          <p className="mt-2 text-gray-600">{productStatus}</p>
+          <div className="flex justify-between mt-6">
+            <span className="text-2xl font-bold text-button-gpt">
+              <CurrencyFormat
+                value={`${
+                  productPrice.toString().includes(".")
+                    ? productPrice.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                      })
+                    : `{${productPrice}}.00`
+                }`}
+                displayType={"text"}
+                thousandSeparator={true}
+                prefix={"$"}
+              />
+            </span>
+            <button
+              onClick={onRemove}
+              className="px-3 py-1 mr-3 text-white rounded-md bg-button-gpt hover:bg-red-600"
+            >
+              Remove
+            </button>
+          </div>
+          {errors.length > 0 && (
+            <div className="mt-4 text-red-600">
+              {errors.map((error, index) => (
+                <p key={index}>{error}</p>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const OrderSummary: React.FC<any> = ({
   visibleItems,
@@ -286,10 +308,9 @@ const OrderSummary: React.FC<any> = ({
   makePayment,
 }) => {
   console.log(discount);
+  const [isLoading, setIsLoading] = useState(false);
   // console.log(visibleItems);
   // Convert unifiedDueDate to a DateTime object for comparison
-  const dueDate = unifiedDueDate ? DateTime.fromISO(unifiedDueDate) : null;
-  const today = DateTime.now();
 
   // Determine error messages
   const errors: string[] = [];
@@ -297,9 +318,6 @@ const OrderSummary: React.FC<any> = ({
     errors.push(
       "Total must be at least $100 when there are two or more items."
     );
-  }
-  if (dueDate && today > dueDate) {
-    errors.push("The payment is past the due date.");
   }
 
   return (
@@ -399,13 +417,28 @@ const OrderSummary: React.FC<any> = ({
           </span>
         </div>
       </div>
-      <button
+      <Button
+        isLoading={isLoading}
+        disabled={errors.length > 0 ? true : false}
+        onPress={() => {
+          setIsLoading(true);
+          makePayment().then(() => {
+            setIsLoading(false);
+          });
+        }}
+        className="px-10 py-3 text-lg font-semibold text-white transition-transform transform rounded-lg shadow-md mt-6 bg-button-gpt hover:bg-button-gpt-dark hover:scale-105"
+
+        // className="bg-button-gpt hover:bg-button-gpt-hover"
+      >
+        {isLoading ? "Checking Out..." : "Pay Now"}
+      </Button>
+      {/* <button
         className="px-10 py-3 text-lg font-semibold text-white transition-transform transform rounded-lg shadow-md mt-6 bg-button-gpt hover:bg-button-gpt-dark hover:scale-105"
         disabled={errors.length > 0 ? true : false}
         onClick={makePayment}
       >
         Pay Now
-      </button>
+      </button> */}
       {errors.length > 0 && (
         <div className="mt-4 text-red-600">
           {errors.map((error, index) => (

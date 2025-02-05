@@ -12,7 +12,7 @@ const DashboardHeader: React.FC = () => {
   // const [fuser, setFUser] = useState<any>(null);
   const navigate = useNavigate();
   const { user }: any = useAuth();
-  console.log("AUTH:", user);
+  // console.log("AUTH:", user);
 
   // const sampleNotifications = [
   //   "Payment for Order #1234 received. Reward: 10% off",

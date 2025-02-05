@@ -1,92 +1,16 @@
-// import { getFirestore, doc, getDoc } from "firebase/firestore";
-// import { FirebaseApp, initializeApp } from "firebase/app";
-
-// // Initialize Firebase app
-// const firebaseConfig = {
-//   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-//   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-//   projectId: import.meta.env.VITE_PROJECT_ID,
-//   storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-//   messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-//   appId: import.meta.env.VITE_APP_ID,
-//   measurementId: import.meta.env.VITE_MEASUREMENT_ID,
-// };
-
-// const app: FirebaseApp = initializeApp(firebaseConfig);
-// const db = getFirestore(app);
-
-// // Universal function to populate reference field
-// export async function populateReference(
-//   referenceField: any, // Reference field in the main object
-//   tableName: string, // The collection name of the referenced document
-//   mainObject: any // The main object where the referenced data will be populated
-// ): Promise<any> {
-//   try {
-//     // Get reference field from main object (assume it's a reference)
-//     const reference = mainObject[referenceField];
-//     if (!reference) {
-//       console.log(`No reference found in the field: ${referenceField}`);
-//       return mainObject; // Return the main object without modification
-//     }
-
-//     // Get the referenced document ID from the reference field
-//     const docRef = doc(db, tableName, reference.id); // Assuming the reference contains an `id` field
-//     const docSnap = await getDoc(docRef);
-
-//     if (docSnap.exists()) {
-//       const referencedData = docSnap.data(); // Get the referenced data
-//       const populatedObject = {
-//         ...mainObject,
-//         [referenceField]: referencedData, // Attach the referenced data to the main object
-//       };
-//       return populatedObject;
-//     } else {
-//       console.log(`No document found for reference: ${reference.id}`);
-//       return mainObject; // Return the main object without modification
-//     }
-//   } catch (error) {
-//     console.error("Error populating reference:", error);
-//     return mainObject; // Return the main object in case of error
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import { getFirestore, doc, getDoc } from 'firebase/firestore'
-import { FirebaseApp, initializeApp } from 'firebase/app'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  getAuth,
-  signInWithPhoneNumber,
-  sendEmailVerification,
-  User
-} from 'firebase/auth'
-
+  getFirestore,
+  addDoc,
+  collection,
+  deleteDoc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { FirebaseApp, initializeApp } from "firebase/app";
+import { getAuth, fetchSignInMethodsForEmail } from "firebase/auth";
+import axios from "axios";
 // Initialize Firebase app using environment variables.
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -95,93 +19,187 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_APP_ID,
-  measurementId: import.meta.env.VITE_MEASUREMENT_ID
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
+};
+
+const app: FirebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+console.log(auth);
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+async function storeOTP(email: string, otp: string) {
+  // Set expiry 10 minutes in the future
+  const expiry = new Date();
+  expiry.setMinutes(expiry.getMinutes() + 5);
+
+  const documentsCollection = collection(db, "otpVerifications");
+  await addDoc(documentsCollection, {
+    otp: otp,
+    email: email,
+    expiry: expiry,
+  });
 }
 
-const app: FirebaseApp = initializeApp(firebaseConfig)
-const db = getFirestore(app)
-const auth = getAuth(app)
-
-/**
- * Dummy app verifier that bypasses reCAPTCHA.
- * This object conforms to the interface expected by signInWithPhoneNumber,
- * but it simply returns a resolved promise. Use only for development/testing.
- */
-const dummyAppVerifier = {
-  type: 'recaptcha',
-  verify: () => Promise.resolve('dummy-token')
-}
-
-/**
- * Universal function to populate a reference field.
- *
- * @param referenceField - The field name in the main object that contains the reference.
- * @param tableName - The collection name where the referenced document is stored.
- * @param mainObject - The object containing the reference field.
- * @returns The main object with the referenced data populated (if found).
- */
-export async function populateReference (
-  referenceField: string,
-  tableName: string,
-  mainObject: any
-): Promise<any> {
+async function checkIfEmailExists(email: string) {
   try {
-    const reference = mainObject[referenceField]
-    if (!reference) {
-      console.log(`No reference found in the field: ${referenceField}`)
-      return mainObject
-    }
+    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
 
-    // Assuming the reference object contains an 'id' property.
-    const docRef = doc(db, tableName, reference.id)
-    const docSnap = await getDoc(docRef)
-
-    if (docSnap.exists()) {
-      const referencedData = docSnap.data()
-      return {
-        ...mainObject,
-        [referenceField]: referencedData
-      }
+    if (signInMethods.length > 0) {
+      console.log("Email is already registered.");
+      return true; // Email exists in Firebase Authentication
     } else {
-      console.log(`No document found for reference: ${reference.id}`)
-      return mainObject
+      console.log("Email is not registered.");
+      return false; // Email is not in Firebase Authentication
     }
   } catch (error) {
-    console.error('Error populating reference:', error)
-    return mainObject
+    console.error("Error checking email:", error);
+    return false; // Handle errors (e.g., invalid email format)
   }
 }
 
-/**
- * Sends a phone OTP using Firebase Auth with a dummy app verifier.
- *
- * @param phoneNumber - The phone number to which the OTP will be sent.
- */
-export async function sendPhoneOTP (phoneNumber: string): Promise<void> {
+export async function sendEmailVerificationOTP(
+  email: string,
+  firstName: string
+): Promise<{ success: boolean; error?: string }> {
   try {
-    const confirmationResult = await signInWithPhoneNumber(
-      auth,
-      phoneNumber,
-      dummyAppVerifier
-    )
-    // Save confirmationResult globally to verify the OTP later.
-    ;(window as any).confirmationResult = confirmationResult
-    console.log('OTP sent to phone number:', phoneNumber)
-  } catch (error) {
-    console.error('Error sending OTP:', error)
+    // Check if the email exists in Firebase Authentication
+    const emailExists = await checkIfEmailExists(email);
+    if (emailExists) {
+      return {
+        success: false,
+        error: "Email is not registered in Firebase Authentication.",
+      };
+    }
+
+    console.log(email);
+    const otp = generateOTP();
+    await storeOTP(email, otp);
+
+    const formData = {
+      subject: `OTP Verification for VUIOR`,
+      description: `Hello ${firstName},
+
+      Thank you for registering with VUIOR. Please use the following OTP to verify your account:
+
+      OTP: ${otp}
+
+      This OTP is valid for 5 minutes. If you did not request this, please ignore this email.
+
+      Best Regards,
+      The VUIOR Team`,
+      name: firstName,
+      email: email,
+      otp: otp,
+    };
+
+    const accessKey = "C63SwSugFYkrclqIedXCPkaGoyEh8MIEkNRO";
+    const channelId = "367dbe7b-7e2b-5be1-a4c7-6327128b7b6b";
+    const workspaceId = "f8f5bb9b-7243-48d8-9bcc-29b3792a27aa";
+    const url = `https://api.bird.com/workspaces/${workspaceId}/channels/${channelId}/messages`;
+
+    const data = {
+      receiver: {
+        contacts: [{ identifierValue: email }],
+      },
+      body: {
+        type: "html",
+        html: {
+          metadata: {
+            subject: formData.subject,
+          },
+          html: `
+          <p>${formData.subject}</p>
+          <ul>
+            <li><strong>Name:</strong> ${formData.name}</li>
+            <li><strong>Email:</strong> ${formData.email}</li>
+            <li><strong>Message:</strong> ${formData.description}</li>
+            <li><strong>OTP:</strong> ${formData.otp}</li>
+          </ul>
+          <div style="width:500px; background-color:#10a37f; text-align:center; justify-content:center; color:white; border-radius:05px;">
+          </div>
+          `,
+          text: `
+            Subject: ${formData.subject}
+            Name: ${formData.name}
+            Email: ${formData.email}
+            Message: ${formData.description}
+            OTP: ${formData.otp}
+          `,
+        },
+      },
+    };
+
+    const headers = {
+      Authorization: `AccessKey ${accessKey}`,
+      "Content-Type": "application/json",
+    };
+
+    await axios.post(url, data, { headers });
+
+    return { success: true }; // ✅ Return success if everything works
+  } catch (error: any) {
+    console.error("Error sending verification email:", error);
+    return { success: false, error: error.message || "Unknown error occurred" }; // ❌ Return error message
   }
 }
 
-/**
- * Sends an email verification link to the user's email.
- *
- * @param user - The currently signed-in Firebase User.
- */
-export async function sendEmailVerificationOTP (user: User): Promise<void> {
+export async function verifyOTP(
+  email: string,
+  enteredOTP: string
+): Promise<{ success: boolean; error?: string }> {
+  console.log(email, enteredOTP);
   try {
-    await sendEmailVerification(user)
-    console.log('Verification email sent to:', user.email)
-  } catch (error) {
-    console.error('Error sending verification email:', error)
+    const otpCollection = collection(db, "otpVerifications");
+
+    // Query Firestore where email matches and OTP matches
+    const q = query(
+      otpCollection,
+      where("email", "==", email),
+      where("otp", "==", enteredOTP) // Ensure OTP matches
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return { success: false, error: "Invalid OTP or email." };
+    }
+
+    let otpDocRef = null;
+    let expiryTime = new Date();
+    expiryTime.setMinutes(expiryTime.getMinutes() - 10);
+
+    querySnapshot.forEach((doc) => {
+      otpDocRef = doc.ref;
+      expiryTime = doc.data().expiry.toDate(); // Convert Firestore timestamp to Date object
+    });
+
+    if (!otpDocRef || !expiryTime) {
+      return {
+        success: false,
+        error: "OTP verification failed due to missing data.",
+      };
+    }
+
+    // Check if the OTP has expired
+    if (new Date() > expiryTime) {
+      return {
+        success: false,
+        error: "OTP has expired. Please request a new one.",
+      };
+    }
+
+    // OTP is valid, delete the document after verification
+    await deleteDoc(otpDocRef);
+
+    return { success: true }; // ✅ OTP verified successfully
+  } catch (error: any) {
+    console.error("Error verifying OTP:", error);
+    return {
+      success: false,
+      error: error.message || "Unknown error occurred during OTP verification.",
+    };
   }
 }
