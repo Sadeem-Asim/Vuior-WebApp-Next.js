@@ -56,7 +56,7 @@ export const ConsultationSchema = z.object({
 export const JobApplicationSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  jobTitle: z.string().min(1, "Job Title is required"),
+  // jobTitle: z.string().min(1, "Job Title is required"),
   email: z.string().email(),
   phoneNumber: z.string().min(1, "Phone number is required"),
   agreeToPromotionalMessages: z.boolean().optional(),

@@ -49,6 +49,7 @@ const JobApplication = () => {
       agreeToPromotionalMessages: true,
       phoneNumber: "",
       timeSlot: "",
+      date: new Date(),
     },
   });
   // const fileRef = form.register("file");
@@ -59,12 +60,12 @@ const JobApplication = () => {
     register,
     formState: { errors },
   } = form;
-
   const handleFileUpload = (event: any) => {
     setUDoc(event.target.files[0]);
   };
 
   const onSubmit = async (values: JobApplicationData) => {
+    console.log(values);
     setIsLoading(true);
     const docRef = ref(storage, `docs/${uDoc.name}`);
     const snapshot = await uploadBytes(docRef, uDoc);
@@ -116,6 +117,8 @@ const JobApplication = () => {
             <ul>
               <li><strong>Name:</strong> ${formData.name}</li>
               <li><strong>Email:</strong> ${formData.email}</li>
+              <li><strong>Job Title:</strong> ${formData.jobTitle}</li>
+
               <li><strong>Phone:</strong> ${formData.phone}</li>
               <li><strong>Date:</strong> ${formData.selectedDate}</li>
               <li><strong>Time Slot:</strong> ${formData.timeSlot}</li>
@@ -128,6 +131,7 @@ const JobApplication = () => {
             text: `
               New job application received!
               Name: ${formData.name}
+              Job Title: ${formData.jobTitle}
               Email: ${formData.email}
               Phone: ${formData.phone}
               Date: ${formData.selectedDate}
@@ -281,17 +285,18 @@ const JobApplication = () => {
             name="file"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Upload Resume</FormLabel>
+                <FormLabel htmlFor="resume-upload">Upload Resume</FormLabel>{" "}
                 <FormControl>
                   <Input
+                    id="resume-upload"
                     type="file"
                     accept=".pdf,.doc,.docx"
-                    // onChange={handleFileUpload}
                     onChange={(e) => {
                       field.onChange(e.target.files);
                       handleFileUpload(e);
-                    }} // Capture FileList
+                    }}
                     isInvalid={!!errors.file?.message}
+                    aria-label="Upload your resume"
                   />
                 </FormControl>
                 <FormMessage>{errors.file?.message}</FormMessage>
@@ -316,7 +321,6 @@ const JobApplication = () => {
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                {/* <FormLabel>Date of birth</FormLabel> */}
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -358,7 +362,7 @@ const JobApplication = () => {
               By checking this box I agree to receive automated promotional
               messages. This agreement is not a condition of purchase. Message
               frequency varies. Reply STOP to opt out or HELP for help. Message
-              & data rates apply.{" "}
+              & data rates apply.
               <NavLink
                 className={"underline text-button-gpt"}
                 to={"/terms-of-service"}
@@ -384,6 +388,7 @@ const JobApplication = () => {
               isLoading={isLoading}
               variant="faded"
               type="submit"
+              aria-label="Submit"
             >
               Submit
             </Button>
