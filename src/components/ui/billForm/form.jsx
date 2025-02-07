@@ -54,18 +54,12 @@ export default function BillFormComponent({ bill = {}, update = false }) {
   const extractText = async (event) => {
     try {
       const file = event.target.files[0];
-      console.log("uplaodBillHit", file);
       if (!file) {
         throw new Error("No file selected.");
       }
-
-      // Step 3: Extract text from the PDF
       const text = await pdfToText(file);
       console.log("Extracted Text:", text);
-
-      // Clean and normalize the extracted text
       const cleanedText = text.replace(/\s+/g, " ").toLowerCase();
-
       // Step 4: Extract values using regex
       const values = {
         name:
@@ -150,6 +144,28 @@ export default function BillFormComponent({ bill = {}, update = false }) {
       const action = createBill;
       formData.user_id = user?.id;
       formData.status = "unpaid";
+      let file = formData.uploadBill[0];
+      console.log(file);
+
+      const storageRef = ref(storage, `documents/${user?.id}/${file.name}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      const fileUrl = await getDownloadURL(snapshot.ref);
+
+      // Step 2: Add document metadata to Firestore
+      const documentsCollection = collection(db, "documents");
+
+      console.log(user.id, file.name, fileUrl, file.name, file.type);
+      await addDoc(documentsCollection, {
+        userId: user.id,
+        documentUrl: fileUrl,
+        documentName: file.name,
+        documentType: file.type,
+        uploadedAt: new Date(),
+        purpose: "Bill",
+      });
+
+      formData.uploadBill = null;
+
       await action(formData);
       setState({ success: true });
       toast({
@@ -169,19 +185,13 @@ export default function BillFormComponent({ bill = {}, update = false }) {
   }, [state, navigate]);
 
   console.log(watch("amount"));
-  let formLabels = extractedText
-    ? {
-        name: "",
-        amount: "",
-        dueDate: "",
-        accountNumber: "",
-      }
-    : {
-        name: "Bill Name",
-        amount: "Bill Amount",
-        dueDate: "Bill Due Date",
-        accountNumber: "Bill Account Number",
-      };
+  let formLabels = {
+    name: "Bill Name",
+    amount: "Bill Amount",
+    dueDate: "Bill Due Date",
+    accountNumber: "Bill Account Number",
+    uploadBill: "Upload Bill",
+  };
 
   return (
     <Modal
@@ -194,171 +204,96 @@ export default function BillFormComponent({ bill = {}, update = false }) {
         <ModalContent>
           <ModalHeader>{isUploadMode ? "Upload " : "Create "}Bill</ModalHeader>
 
-          {!extractedText && (
-            <ModalBody>
-              {state?.error && <div className="error">{state.error}</div>}
-              <div className={styles.formWrapper}>
-                <div className={styles.formElementsWrapper}>
-                  <Input
-                    className={styles.formInput}
-                    errorMessage={
-                      !!errors.name && "Please provide the bill name"
-                    }
-                    isInvalid={!!errors.name}
-                    label={formLabels.name}
-                    labelPlacement="outside"
-                    {...register("name", { required: true })}
-                    radius="sm"
-                    type="text"
-                    variant="bordered"
-                  />
-                  <CurrencyFormat
-                    customInput={Input}
-                    label={formLabels.amount}
-                    isInvalid={!!errors.amount}
-                    labelPlacement="outside"
-                    onValueChange={(values) => {
-                      const { floatValue } = values;
-                      setValue("amount", floatValue || ""); // Set the float value or an empty string if undefined
-                    }}
-                    {...register("amount", {
-                      required: "Please provide the bill amount",
-                    })}
-                    radius="sm"
-                    type="text"
-                    variant="bordered"
-                    errorMessage={
-                      !!errors.amount && "Please provide the bill amount"
-                    }
-                    className={styles.formInput}
-                    prefix="$"
-                    thousandSeparator={true}
-                  />
-                </div>
-                <div className={styles.formElementsWrapper}>
-                  <Input
-                    className={styles.formInput}
-                    errorMessage={
-                      !!errors.accountNumber &&
-                      "Please provide the account number"
-                    }
-                    isInvalid={!!errors.accountNumber}
-                    label={formLabels.accountNumber}
-                    labelPlacement="outside"
-                    {...register("accountNumber", { required: true })}
-                    radius="sm"
-                    type="text"
-                    variant="bordered"
-                  />
-                  <Input
-                    className={styles.formInput}
-                    // defaultValue={extractedText?.dueDate || ''}
-                    // value={extractedText?.dueDate || ''}
-                    errorMessage={
-                      !!errors.dueDate && "Please provide the due date"
-                    }
-                    isInvalid={!!errors.dueDate}
-                    label={formLabels.dueDate}
-                    labelPlacement="outside"
-                    {...register("dueDate", { required: true })}
-                    radius="sm"
-                    type="date"
-                    variant="bordered"
-                  />
-                </div>
+          <ModalBody>
+            {state?.error && <div className="error">{state.error}</div>}
+            <div className={styles.formElementsWrapper}>
+              <Input
+                type="file"
+                onChange={extractText}
+                isInvalid={!!errors.uploadBill}
+                accept=".pdf,.jpg,.png"
+                radius="sm"
+                variant="bordered"
+                errorMessage={
+                  !!errors.uploadBill && "Please provide the bill name"
+                }
+                label={formLabels.uploadBill}
+                labelPlacement="outside"
+                // required
 
-                <div className={styles.formElementsWrapper}>
-                  <Input
-                    type="file"
-                    label="Upload Bill"
-                    onChange={extractText}
-                    accept=".pdf,.jpg,.png"
-                    radius="sm"
-                    variant="bordered"
-                    // required
-
-                    //  {...register("uploadBill", { required: true })}
-                  />
-                </div>
+                {...register("uploadBill", { required: true })}
+              />
+            </div>
+            <div className={styles.formWrapper}>
+              <div className={styles.formElementsWrapper}>
+                <Input
+                  className={styles.formInput}
+                  errorMessage={!!errors.name && "Please provide the bill name"}
+                  isInvalid={!!errors.name}
+                  label={formLabels.name}
+                  labelPlacement="outside"
+                  {...register("name", { required: true })}
+                  radius="sm"
+                  type="text"
+                  variant="bordered"
+                />
+                <CurrencyFormat
+                  customInput={Input}
+                  label={formLabels.amount}
+                  isInvalid={!!errors.amount}
+                  labelPlacement="outside"
+                  onValueChange={(values) => {
+                    const { floatValue } = values;
+                    setValue("amount", floatValue || ""); // Set the float value or an empty string if undefined
+                  }}
+                  {...register("amount", {
+                    required: "Please provide the bill amount",
+                  })}
+                  radius="sm"
+                  type="text"
+                  variant="bordered"
+                  errorMessage={
+                    !!errors.amount && "Please provide the bill amount"
+                  }
+                  className={styles.formInput}
+                  prefix="$"
+                  thousandSeparator={true}
+                />
               </div>
-            </ModalBody>
-          )}
-
-          {extractedText && (
-            <ModalBody>
-              {state?.error && <div className="error">{state.error}</div>}
-              <div className={styles.formWrapper}>
-                <div className={styles.formElementsWrapper}>
-                  <Input
-                    className={styles.formInput}
-                    defaultValue={extractedText?.name || ""}
-                    // value={extractedText?.name || ''}
-                    // onChange={(e) =>{setValue("name",'')}}
-                    errorMessage={
-                      !!errors.name && "Please provide the bill name"
-                    }
-                    isInvalid={!!errors.name}
-                    label={formLabels.name}
-                    labelPlacement="outside"
-                    {...register("name", { required: true })}
-                    radius="sm"
-                    type="text"
-                    variant="bordered"
-                  />
-                  <Input
-                    className={styles.formInput}
-                    defaultValue={extractedText?.amount}
-                    errorMessage={
-                      !!errors.amount && "Please provide the bill amount"
-                    }
-                    // value={extractedText?.amount || ''}
-                    isInvalid={!!errors.amount}
-                    label={formLabels.amount}
-                    labelPlacement="outside"
-                    {...register("amount", { required: true })}
-                    radius="sm"
-                    type="text"
-                    variant="bordered"
-                  />
-                </div>
-
-                <div className={styles.formElementsWrapper}>
-                  <Input
-                    className={styles.formInput}
-                    defaultValue={extractedText?.accountNumber || ""}
-                    // value={extractedText?.accountNumber || ''}
-                    errorMessage={
-                      !!errors.accountNumber &&
-                      "Please provide the account number"
-                    }
-                    isInvalid={!!errors.accountNumber}
-                    label={formLabels.accountNumber}
-                    labelPlacement="outside"
-                    {...register("accountNumber", { required: true })}
-                    radius="sm"
-                    type="text"
-                    variant="bordered"
-                  />
-
-                  <Input
-                    className={styles.formInput}
-                    defaultValue={extractedText?.dueDate || ""}
-                    // value={extractedText?.billDate || ''}
-                    errorMessage={
-                      !!errors.dueDate && "Please provide the due date"
-                    }
-                    isInvalid={!!errors.dueDate}
-                    label={formLabels.dueDate}
-                    labelPlacement="outside"
-                    {...register("dueDate", { required: true })}
-                    radius="sm"
-                    type="date"
-                    variant="bordered"
-                  />
-                </div>
+              <div className={styles.formElementsWrapper}>
+                <Input
+                  className={styles.formInput}
+                  errorMessage={
+                    !!errors.accountNumber &&
+                    "Please provide the account number"
+                  }
+                  isInvalid={!!errors.accountNumber}
+                  label={formLabels.accountNumber}
+                  labelPlacement="outside"
+                  {...register("accountNumber", { required: true })}
+                  radius="sm"
+                  type="text"
+                  variant="bordered"
+                />
+                <Input
+                  className={styles.formInput}
+                  // defaultValue={extractedText?.dueDate || ''}
+                  // value={extractedText?.dueDate || ''}
+                  errorMessage={
+                    !!errors.dueDate && "Please provide the due date"
+                  }
+                  isInvalid={!!errors.dueDate}
+                  label={formLabels.dueDate}
+                  labelPlacement="outside"
+                  {...register("dueDate", { required: true })}
+                  radius="sm"
+                  type="date"
+                  variant="bordered"
+                />
               </div>
-            </ModalBody>
-          )}
+            </div>
+          </ModalBody>
+
           <ModalFooter className={styles.footer}>
             <Button
               className={styles.footerButton}
