@@ -69,11 +69,8 @@ const JobApplication = () => {
     setIsLoading(true);
     const docRef = ref(storage, `docs/${uDoc.name}`);
     const snapshot = await uploadBytes(docRef, uDoc);
-    console.log("Uploaded a doc!");
     // Get the download URL
     const docUrl = await getDownloadURL(snapshot.ref);
-    console.log("doc URL:", docUrl);
-    console.log("values: ", values);
     setIsLoading(true);
     const selectedDate = format(values.date, "PPP");
 
@@ -154,7 +151,6 @@ const JobApplication = () => {
           console.log("Email sent successfully:", response.data);
         })
         .catch((error) => {
-          console.log("madar", error);
           console.error(
             "Error sending email:",
             error.response?.data || error.message
@@ -167,7 +163,7 @@ const JobApplication = () => {
       });
       form.reset();
     } catch (error) {
-      console.log("maachi", error);
+      console.log(error);
       toast({
         title: "Error",
         description: "Unable to submit application",

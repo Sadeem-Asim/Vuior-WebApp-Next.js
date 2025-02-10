@@ -9,7 +9,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { getAuth, fetchSignInMethodsForEmail } from "firebase/auth";
+// import { getAuth, } from "firebase/auth";
 import axios from "axios";
 // Initialize Firebase app using environment variables.
 const firebaseConfig = {
@@ -24,8 +24,8 @@ const firebaseConfig = {
 
 const app: FirebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
-console.log(auth);
+// const auth = getAuth(app);
+// console.log(auth);
 
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -45,15 +45,11 @@ async function storeOTP(email: string, otp: string) {
 
 async function checkIfEmailExists(email: string) {
   try {
-    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
 
-    if (signInMethods.length > 0) {
-      console.log("Email is already registered.");
-      return true; // Email exists in Firebase Authentication
-    } else {
-      console.log("Email is not registered.");
-      return false; // Email is not in Firebase Authentication
-    }
+    return !querySnapshot.empty;
   } catch (error) {
     console.error("Error checking email:", error);
     return false; // Handle errors (e.g., invalid email format)
@@ -62,19 +58,29 @@ async function checkIfEmailExists(email: string) {
 
 export async function sendEmailVerificationOTP(
   email: string,
-  firstName: string
+  firstName: string,
+  reset: boolean = false
 ): Promise<{ success: boolean; error?: string }> {
   try {
     // Check if the email exists in Firebase Authentication
-    const emailExists = await checkIfEmailExists(email);
-    if (emailExists) {
-      return {
-        success: false,
-        error: "Email is not registered in Firebase Authentication.",
-      };
+    if (!reset) {
+      const emailExists = await checkIfEmailExists(email);
+      if (emailExists) {
+        return {
+          success: false,
+          error: "This Email is already registered in Vuior.",
+        };
+      }
+    } else if (reset) {
+      const emailExists = await checkIfEmailExists(email);
+      if (!emailExists) {
+        return {
+          success: false,
+          error: "This Email is not registered in Vuior.",
+        };
+      }
     }
 
-    console.log(email);
     const otp = generateOTP();
     await storeOTP(email, otp);
 

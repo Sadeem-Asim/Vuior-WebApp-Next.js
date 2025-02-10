@@ -39,6 +39,7 @@ const RegisterUser = () => {
       firstName: "",
       lastName: "",
       phoneNumber: "",
+      dob: "",
       agreeToPromotionalMessages: true,
     },
     mode: "onChange",
@@ -57,6 +58,8 @@ const RegisterUser = () => {
   const [timeZone, setTimeZone] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [enteredOtp, setEnteredOtp] = useState("");
+  const [dob, setDob] = useState("");
+
   const verifyOtp = async () => {
     try {
       if (enteredOtp.length !== 6) {
@@ -76,7 +79,8 @@ const RegisterUser = () => {
           firstName,
           lastName,
           phoneNumber,
-          timeZone
+          timeZone,
+          dob
         ).then(() => {
           toast({
             title: "Account Created Successfully.",
@@ -95,8 +99,34 @@ const RegisterUser = () => {
       console.error("Error verifying OTP:", error);
     }
   };
+  const calculateAge = (dob: string): number => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
 
   const onSubmit = async (values: RegisterUserFormData) => {
+    const userAge = calculateAge(values.dob);
+    console.log(userAge);
+
+    if (userAge < 18) {
+      toast({
+        title: "Age Restriction",
+        description: "You must be at least 18 years old to register.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       const result = await sendEmailVerificationOTP(
@@ -111,6 +141,8 @@ const RegisterUser = () => {
       setLastName(values.lastName);
       setTimeZone(timeZone);
       setPhoneNumber(values.phoneNumber);
+      setDob(values.dob);
+
       if (!result.success) {
         console.error("Failed to send OTP:", result.error);
         toast({
@@ -287,6 +319,25 @@ const RegisterUser = () => {
                           />
                         </FormControl>
                       </div>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={control}
+                  name="dob"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          variant="bordered"
+                          size="md"
+                          type="date"
+                          label="Date of Birth"
+                          errorMessage={errors.dob?.message}
+                          isInvalid={!!errors.dob?.message}
+                          {...field}
+                        />
+                      </FormControl>
                     </FormItem>
                   )}
                 />

@@ -30,56 +30,14 @@ export const useAuth = () => {
     throw new Error("useAuth must be used within an AuthProvider");
   }
 
-  // const registerFirebaseUser = async (
-  //   email: string,
-  //   password: string,
-  //   firstName: string,
-  //   lastName: string,
-  //   phoneNo: string,
-  //   timeZone: any,
-  //   user: any
-  // ) => {
-  //   setIsLoading(true);
-  //   try {
-  //     // const userCredential = await createUserWithEmailAndPassword(
-  //     //   auth,
-  //     //   email,
-  //     //   password
-  //     // );
-  //     // const user = userCredential.user;
-
-  //     // Create a user document in Firestore
-  //     await setDoc(doc(db, "users", user.uid), {
-  //       email: user.email,
-  //       firstName: firstName,
-  //       lastName: lastName,
-  //       role: "user",
-  //       phoneNo: phoneNo,
-  //       avatar: DEFAULT_AVATAR,
-  //       timeZone: timeZone,
-  //       createdAt: new Date(),
-  //     });
-  //     setIsLoading(false);
-  //     return { success: true, user };
-  //   } catch (error) {
-  //     console.error("Registration error:", error);
-  //     setIsLoading(false);
-  //     toast({
-  //       title: "Error",
-  //       description: "Unable to create account right now.",
-  //       variant: "destructive",
-  //     });
-  //     throw error;
-  //   }
-  // };
-
   const registerUser = async (
     email: string,
     password: string,
     firstName: string,
     lastName: string,
     phoneNo: string,
-    timeZone: any
+    timeZone: any,
+    dob: string
   ) => {
     setIsLoading(true);
     try {
@@ -99,6 +57,7 @@ export const useAuth = () => {
         phoneNo: phoneNo,
         avatar: DEFAULT_AVATAR,
         timeZone: timeZone,
+        dob: dob,
         createdAt: new Date(),
       });
 
