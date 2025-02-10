@@ -8,7 +8,7 @@ const Footer = () => {
           <div className="max-w-[517px] mx-auto">
             <img src="/assets/icons/logo.png" alt="logo" />
             <p className="font-poppins text-white mt-[20px] text-[14px] lg:text-[1vw]">
-              Vuior – Empowering Your Financial Future, One Payment at a Time.
+              Vuior - Empowering Your Financial Future, One Payment at a Time.
             </p>
             <div className="mt-[40px]">
               <div className="flex items-end gap-[30px] mt-[30px]">
