@@ -18,7 +18,15 @@ const Footer = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <img src="/assets/icons/twitter.png" alt="twitter" />
+                    <img
+                      src="/assets/icons/facebookLogo.png"
+                      alt="twitter"
+                      style={{
+                        width: 30,
+                        height: 30,
+                        background: "white",
+                      }}
+                    />
                   </a>
                 </div>
                 <div className="cursor-pointer">
