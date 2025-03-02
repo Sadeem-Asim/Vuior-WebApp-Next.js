@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from "framer-motion";
 import { Fragment } from "react/jsx-runtime";
 import ShinyButton from "./shiny-button";
@@ -23,34 +24,34 @@ import At from "./../../../../public/assets/icons/AT&T.png";
 import SouthernCompany from "./../../../../public/assets/icons/SouthernCompany.png";
 import Mastercard from "./../../../../public/assets/icons/mastercard.png";
 import Verizon from "./../../../../public/assets/icons/verizon.png";
-import Chase from "./../../../../public/assets/icons/chase.png";
+import Exelon from "./../../../../public/assets/icons/exelon.png";
 
 import { Image } from "@nextui-org/react";
 const Hero = () => {
   const logos = [
     {
       src: At,
-      alt: "Meta",
+      alt: "At",
       width: 200,
     },
     {
       src: SouthernCompany,
-      alt: "Tesla",
+      alt: "SouthernCompany",
       width: 200,
     },
     {
       src: Mastercard,
-      alt: "Coinbase",
+      alt: "Mastercard",
       width: 200,
     },
     {
       src: Verizon,
-      alt: "Google",
+      alt: "Verizon",
       width: 200,
     },
     {
-      src: Chase,
-      alt: "Amazon",
+      src: Exelon,
+      alt: "Exelon",
       width: 200,
     },
   ];
