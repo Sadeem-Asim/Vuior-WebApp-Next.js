@@ -1,5 +1,4 @@
 import { useNavigate, NavLink } from "react-router-dom";
-// useLocation
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,21 +9,23 @@ import { Button } from "@nextui-org/button";
 import { useToast } from "../hooks/use-toast";
 import { useAuth } from "../hooks/useAuth";
 import { LoginSchema } from "../lib/validations";
-// import { dummyUser } from "../components/constants/dummyuser";
 import { FormField, FormItem, FormControl, Form } from "../components/ui/form";
 import { Image } from "@nextui-org/react";
+import { googleProvider } from "@/lib/firebaseConfig";
+// import { auth, googleProvider } from "@/lib/firebaseConfig";
+
+// import { auth, provider } from "../lib/firebase"; // Firebase setup
+// import { signInWithPopup } from "firebase/auth";
 
 type LoginFormData = z.infer<typeof LoginSchema>;
 
 const LoginPage = () => {
   const { toast } = useToast();
-
   const navigate = useNavigate();
-  // const location = useLocation();
-  const { login } = useAuth();
+  const { login, handleGoogleSignIn } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // const from = location?.state?.from?.pathname || "/";
   const [isVisible, setIsVisible] = useState<boolean>(false);
+
   const form = useForm<LoginFormData>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -40,39 +41,57 @@ const LoginPage = () => {
     formState: { errors },
   } = form;
 
-const handleLogin = async (values: LoginFormData) => {
-  setIsLoading(true)
-  try {
-    console.log(values)
+  // Regular email/password login
+  const handleLogin = async (values: LoginFormData) => {
+    setIsLoading(true);
+    try {
+      console.log(values);
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await login(values.email, values.password);
+      toast({ title: "Success", description: "Login Successful" });
+      navigate("/dashboard", { replace: true });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Unable to login right now",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    // Simulate delay using a promise
-    await new Promise((resolve) => setTimeout(resolve, 3000))
+  // Google Sign-In function
+  const handleGoogleSignInForm = async () => {
+    setIsLoading(true);
+    try {
+      // const result = await signInWithPopup(auth, googleProvider);
+      // console.log("Google User: ", result.user);
+      await handleGoogleSignIn(googleProvider);
+      setIsLoading(false);
 
-    await login(values.email, values.password)
+      toast({ title: "Success", description: "Google Sign-In Successful" });
+      navigate("/dashboard", { replace: true });
+    } catch (error) {
+      setIsLoading(false);
 
-    toast({
-      title: "Success",
-      description: "Login Success",
-    })
-
-    navigate("/dashboard", { replace: true })
-  } catch (error) {
-    console.error(error)
-    toast({
-      title: "Error",
-      description: "Unable to login right now",
-      variant: "destructive",
-    })
-  } finally {
-    setIsLoading(false)
-  }
-}
+      console.error("Google Sign-In Error: ", error);
+      toast({
+        title: "Error",
+        description: "Google Sign-In Failed",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   return (
-    <div className="md:min-h-screen gap-5 lg:gap-10  md:mt-5  lg:mt-16 px-4 w-[95vw] grid md:grid-cols-2">
-      <div className="w-full flex-col flex items-center justify-center ">
+    <div className="md:min-h-screen gap-5 lg:gap-10 md:mt-5 lg:mt-16 px-4 w-[95vw] grid md:grid-cols-2">
+      <div className="w-full flex-col flex items-center justify-center">
         <div className="mb-5 w-full">
           <h2 className="md:text-3xl text-5xl md:mb-2 font-semibold mb-5">
             Login
@@ -82,6 +101,7 @@ const handleLogin = async (values: LoginFormData) => {
             using the app
           </p>
         </div>
+
         <Form {...form}>
           <form
             className="flex w-full flex-col gap-8 lg:gap-5"
@@ -91,23 +111,19 @@ const handleLogin = async (values: LoginFormData) => {
               control={control}
               name="email"
               render={({ field }) => (
-                <FormItem className=" relative  items-center lg:gap-3">
-                  {/* <FormLabel>Email</FormLabel> */}
+                <FormItem className="relative items-center lg:gap-3">
                   <div className="w-full">
                     <FormControl>
-                      <FormControl>
-                        <Input
-                          variant="bordered"
-                          size="md"
-                          type="email"
-                          label="Email"
-                          errorMessage={errors.email?.message}
-                          isInvalid={!!errors.email?.message}
-                          {...field}
-                        />
-                      </FormControl>
+                      <Input
+                        variant="bordered"
+                        size="md"
+                        type="email"
+                        label="Email"
+                        errorMessage={errors.email?.message}
+                        isInvalid={!!errors.email?.message}
+                        {...field}
+                      />
                     </FormControl>
-                    {/* <FormMessage className="mt-1.5 absolute text-xs" /> */}
                   </div>
                 </FormItem>
               )}
@@ -116,8 +132,7 @@ const handleLogin = async (values: LoginFormData) => {
               control={control}
               name="password"
               render={({ field }) => (
-                <FormItem className=" relative items-center">
-                  {/* <FormLabel>Password</FormLabel> */}
+                <FormItem className="relative items-center">
                   <div className="w-full col-span-4">
                     <FormControl>
                       <Input
@@ -144,41 +159,45 @@ const handleLogin = async (values: LoginFormData) => {
                         type={isVisible ? "text" : "password"}
                       />
                     </FormControl>
-                    {/* <FormMessage className="mt-1.5 absolute text-xs" /> */}
                   </div>
                 </FormItem>
               )}
             />
             <div className="flex items-center justify-between mt-10">
-              <div>
-                <NavLink
-                  to={"/forget-password"}
-                  className={
-                    "text-button-gpt font-semibold hover:underline transition-all"
-                  }
-                >
-                  Forgot Password?
-                </NavLink>
-              </div>
-
-              <Button
-                radius="sm"
-                className="text-white font-bold hover:bg-button-gpt-hover bg-button-gpt"
-                isLoading={isLoading}
-                variant="faded"
-                type="submit"
+              <NavLink
+                to={"/forget-password"}
+                className="text-button-gpt font-semibold hover:underline transition-all"
               >
-                Login
-              </Button>
+                Forgot Password?
+              </NavLink>
+              <div className="flex flex-row gap-5">
+                <Button
+                  radius="sm"
+                  className="text-white font-bold hover:bg-button-gpt-hover bg-button-gpt"
+                  isLoading={isLoading}
+                  variant="faded"
+                  type="submit"
+                >
+                  Login
+                </Button>
+                <Button
+                  radius="sm"
+                  className="text-white font-bold hover:bg-button-gpt-hover bg-button-gpt"
+                  variant="faded"
+                  onPress={handleGoogleSignInForm}
+                  // className="mt-5 text-white font-bold bg-red-500 hover:bg-red-600"
+                >
+                  Sign in with Google
+                </Button>
+              </div>
             </div>
           </form>
         </Form>
+
         <div className="flex mt-10 items-center gap-2">
           <p>Don't have an account?</p>
           <NavLink
-            className={
-              "text-button-gpt font-semibold hover:underline transition-all"
-            }
+            className="text-button-gpt font-semibold hover:underline transition-all"
             to={"/create-account"}
           >
             Create Account

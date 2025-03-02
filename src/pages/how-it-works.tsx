@@ -114,7 +114,7 @@ more you save."
             yourself with Vuior.
           </p>
           <ShinyButton
-            href={"/consultation"}
+            href={"/create-account"}
             className="relative w-fit px-16 z-10 h-14  shadow-lg transition-shadow duration-300 hover:shadow-xl rounded-full font-semibold text-xl"
           >
             Start Saving Now

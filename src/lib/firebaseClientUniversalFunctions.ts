@@ -151,16 +151,46 @@ export async function sendEmailVerificationOTP(
     return { success: false, error: error.message || "Unknown error occurred" }; // ❌ Return error message
   }
 }
+const ACCESS_KEY = "C63SwSugFYkrclqIedXCPkaGoyEh8MIEkNRO";
+const CHANNEL_ID = "367dbe7b-7e2b-5be1-a4c7-6327128b7b6b";
+const WORKSPACE_ID = "f8f5bb9b-7243-48d8-9bcc-29b3792a27aa";
+const API_URL = `https://api.bird.com/workspaces/${WORKSPACE_ID}/channels/${CHANNEL_ID}/messages`;
+
+async function sendWelcomeEmail(email: string, firstName: string) {
+  const headers = {
+    Authorization: `AccessKey ${ACCESS_KEY}`,
+    "Content-Type": "application/json",
+  };
+  const data = {
+    receiver: { contacts: [{ identifierValue: email }] },
+    body: {
+      type: "html",
+      html: {
+        metadata: { subject: "Welcome to VUIOR 🎉" },
+        html: `
+          <p>Hello ${firstName},</p>
+          <p>We are thrilled to welcome you to <strong>VUIOR</strong>! 🚀</p>
+          <p>You are now part of a growing community that values excellence and innovation.</p>
+          <p>To get started, log in and explore all the amazing features we have prepared for you.</p>
+          <p>If you have any questions, feel free to contact our support team.</p>
+          <p>Best Regards, <br/>The VUIOR Team</p>
+        `,
+      },
+    },
+  };
+  await axios.post(API_URL, data, { headers });
+}
 
 export async function verifyOTP(
   email: string,
   enteredOTP: string
 ): Promise<{ success: boolean; error?: string }> {
   console.log(email, enteredOTP);
+
   try {
     const otpCollection = collection(db, "otpVerifications");
 
-    // Query Firestore where email matches and OTP matches
+    // Query Firestore where email and OTP match
     const q = query(
       otpCollection,
       where("email", "==", email),
@@ -175,11 +205,12 @@ export async function verifyOTP(
 
     let otpDocRef = null;
     let expiryTime = new Date();
-    expiryTime.setMinutes(expiryTime.getMinutes() - 10);
+    let firstName = "User"; // Default name in case first name isn't stored
 
     querySnapshot.forEach((doc) => {
       otpDocRef = doc.ref;
       expiryTime = doc.data().expiry.toDate(); // Convert Firestore timestamp to Date object
+      firstName = doc.data().firstName || "User"; // Retrieve first name if available
     });
 
     if (!otpDocRef || !expiryTime) {
@@ -189,7 +220,7 @@ export async function verifyOTP(
       };
     }
 
-    // Check if the OTP has expired
+    // Check if OTP has expired
     if (new Date() > expiryTime) {
       return {
         success: false,
@@ -197,10 +228,13 @@ export async function verifyOTP(
       };
     }
 
-    // OTP is valid, delete the document after verification
+    // Delete OTP document after successful verification
     await deleteDoc(otpDocRef);
 
-    return { success: true }; // ✅ OTP verified successfully
+    // Send welcome email after OTP verification
+    await sendWelcomeEmail(email, firstName);
+
+    return { success: true };
   } catch (error: any) {
     console.error("Error verifying OTP:", error);
     return {

@@ -122,6 +122,7 @@ export default function BillFormComponent({ bill = {}, update = false }) {
         documentType: file.type,
         uploadedAt: new Date(),
         purpose: "Bill",
+        isDeleted: false,
       });
 
       // Notify user of successful upload
@@ -162,6 +163,7 @@ export default function BillFormComponent({ bill = {}, update = false }) {
         documentType: file.type,
         uploadedAt: new Date(),
         purpose: "Bill",
+        isDeleted: false,
       });
 
       formData.uploadBill = null;

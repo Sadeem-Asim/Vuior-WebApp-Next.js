@@ -204,7 +204,7 @@ const ForgetPassword = () => {
 
             <Button
               radius="sm"
-              className="text-white font-bold hover:bg-button-gpt-hover bg-button-gpt"
+              className="text-white font-bold hover:bg-button-gpt-hover bg-button-gpt py-10"
               isLoading={isLoading}
               variant="faded"
               type="submit"

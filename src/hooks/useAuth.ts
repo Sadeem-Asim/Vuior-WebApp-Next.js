@@ -16,6 +16,7 @@ import {
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebaseConfig";
 // } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 
 const DEFAULT_AVATAR =
   "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
@@ -166,6 +167,55 @@ export const useAuth = () => {
       throw error;
     }
   };
+  const handleGoogleSignIn = async (googleProvider: any) => {
+    setIsLoading(true);
+    try {
+      // Sign in with Google
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // Check if user exists in Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // New User - Create a Firestore document
+        await setDoc(userDocRef, {
+          email: user.email,
+          firstName: user.displayName?.split(" ")[0] || "Unknown",
+          lastName: user.displayName?.split(" ")[1] || "User",
+          phoneNo: user.phoneNumber || "",
+          avatar: user.photoURL || DEFAULT_AVATAR,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          dob: "", // DOB is not available from Google Sign-In, you may ask later
+          createdAt: new Date(),
+        });
+
+        toast({
+          title: "Account Created",
+          description: `Welcome, ${user.displayName}!`,
+        });
+      } else {
+        // Existing User - Just log in
+        toast({
+          title: "Login Successful",
+          description: `Welcome back, ${user.displayName}!`,
+        });
+      }
+
+      setIsLoading(false);
+      return { success: true, user };
+    } catch (error) {
+      console.error("Google Sign-In Error: ", error);
+      setIsLoading(false);
+      toast({
+        title: "Error",
+        description: "Google Sign-In Failed. Please try again.",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
 
   const sendResetPasswordEmail = async (email: string) => {
     const continueUrl =
@@ -241,6 +291,7 @@ export const useAuth = () => {
     user: context.user,
     registerUser,
     registerAuthUser,
+    handleGoogleSignIn,
     // registerFirebaseUser,
     login,
     sendResetPasswordEmail,

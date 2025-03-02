@@ -32,15 +32,15 @@ import { Delete } from "lucide-react";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { db } from "@/lib/firebaseConfig";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 
 const handleDelete = async (id) => {
   try {
-    await deleteDoc(doc(db, "documents", id)); // Replace 'documents' with your collection name
+    const docRef = doc(db, "documents", id);
+    await updateDoc(docRef, {
+      isDeleted: true,
+    });
     console.log(`Document with ID ${id} deleted successfully`);
-    // window.location.reload();
-    // Optionally, update the local state to remove the deleted document
-    // setDocs(prevDocs => prevDocs.filter(doc => doc.id !== id))
   } catch (error) {
     console.error("Error deleting document:", error);
   }
@@ -48,113 +48,54 @@ const handleDelete = async (id) => {
 
 const DocumentCard = ({ document }) => {
   return (
-//     <div className="max-w-md mx-auto bg-gray-50  border border-gray-200 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105 animate-fade-in">
-//       {/* Thumbnail Section */}
+    <>
+      <div className="max-w-md mx-auto bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-visible relative transition-transform transform hover:scale-105 animate-fade-in">
+        {/* Thumbnail Section */}
+        <div className="bg-gray-100 h-auto flex items-center justify-center relative overflow-visible">
+          <PDFThumbnail pdfUrl={document.documentUrl} document={document} />
+        </div>
 
-      
+        {/* Document Details */}
+        <div className="p-6 mt-5">
+          <h3 className="text-lg font-semibold text-gray-800 truncate">
+            {document.documentName || "Untitled Document"}
+          </h3>
 
+          <div className="mt-3">
+            <p className="text-sm text-gray-500 mb-1">
+              <strong>Format:</strong> {document.documentType || "Unknown"}
+            </p>
 
-//       <div className='bg-gray-100 h-60 flex items-center justify-center overflow-hidden'>
-//   <PDFThumbnail pdfUrl={document.documentUrl} document={document} />
-// </div>
+            <p className="text-sm text-gray-500">
+              <strong>Uploaded At:</strong>{" "}
+              {new Date(document.uploadedAt.seconds * 1000).toString()}
+            </p>
+            <div className="flex flex-row justify-between">
+              <a
+                href={document.documentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block px-4 py-2 text-white bg-button-gpt rounded hover:bg-button-gpt transition-colors"
+              >
+                View Document
+              </a>
 
-//       {/* <div className="bg-gray-100 h-60 ">
-//         <PDFThumbnail pdfUrl={document.documentUrl} document={document} />
-//       </div> */}
-
-//       {/* Document Details */}
-//       <div className="p-6 mt-12">
-//         <h3 className="text-lg font-semibold text-gray-800 truncate">
-//           {document.documentName || "Untitled Document"}
-//         </h3>
-
-//         <div className="mt-3">
-//           <p className="text-sm text-gray-500 mb-1">
-//             <strong>Format:</strong> {document.documentType || "Unknown"}
-//           </p>
-
-//           <p className="text-sm text-gray-500">
-//             <strong>Uploaded At:</strong>{" "}
-//             {new Date(document.uploadedAt.seconds * 1000).toString()}
-//           </p>
-//           <div className="flex flex-row justify-between">
-//             <a
-//               href={document.documentUrl}
-//               target="_blank"
-//               rel="noopener noreferrer"
-//               className="mt-4 inline-block px-4 py-2 text-white bg-button-gpt rounded hover:bg-button-gpt transition-colors"
-//             >
-//               View Document
-//             </a>
-
-//             <IconButton
-//               aria-label="delete"
-//               onClick={() => handleDelete(document.id)}
-//               style={{ color: "red", marginTop: "10px" }}
-//             >
-//               <DeleteIcon fontSize="large" />
-//             </IconButton>
-//           </div>
-//         </div>
-//       </div>
-    //     </div>
-    
-
-
-    <><div className='max-w-md mx-auto bg-gray-50 border border-gray-200 rounded-lg shadow-lg overflow-visible relative transition-transform transform hover:scale-105 animate-fade-in'>
-  {/* Thumbnail Section */}
-  <div className='bg-gray-100 h-auto flex items-center justify-center relative overflow-visible'>
-    <PDFThumbnail pdfUrl={document.documentUrl} document={document} />
-  </div>
-
-  {/* Document Details */}
-  <div className='p-6 mt-5'>
-    <h3 className='text-lg font-semibold text-gray-800 truncate'>
-      {document.documentName || 'Untitled Document'}
-    </h3>
-
-    <div className='mt-3'>
-      <p className='text-sm text-gray-500 mb-1'>
-        <strong>Format:</strong> {document.documentType || 'Unknown'}
-      </p>
-
-      <p className='text-sm text-gray-500'>
-        <strong>Uploaded At:</strong>{' '}
-        {new Date(document.uploadedAt.seconds * 1000).toString()}
-      </p>
-      <div className='flex flex-row justify-between'>
-        <a
-          href={document.documentUrl}
-          target='_blank'
-          rel='noopener noreferrer'
-          className='mt-4 inline-block px-4 py-2 text-white bg-button-gpt rounded hover:bg-button-gpt transition-colors'
-        >
-          View Document
-        </a>
-
-        <IconButton
-          aria-label='delete'
-          onClick={() => handleDelete(document.id)}
-          style={{ color: 'red', marginTop: '10px' }}
-        >
-          <DeleteIcon fontSize='large' />
-        </IconButton>
+              <IconButton
+                aria-label="delete"
+                onClick={() => handleDelete(document.id)}
+                style={{ color: "red", marginTop: "10px" }}
+              >
+                <DeleteIcon fontSize="large" />
+              </IconButton>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-    </div>
-      </>
-
+    </>
   );
 };
 
 export default DocumentCard;
-
-
-
-
-
-
 
 import { useEffect, useRef, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
@@ -195,7 +136,7 @@ const PDFThumbnail = ({ pdfUrl, document }) => {
         const viewport = page?.getViewport({ scale: 1 });
 
         canvas.width = viewport.width;
-        canvas.height = viewport.height * 0.51 ;
+        canvas.height = viewport.height * 0.51;
 
         const renderContext = {
           canvasContext: context,

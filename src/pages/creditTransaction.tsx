@@ -159,7 +159,7 @@ const Transaction = ({ add }: any) => {
                   type="number"
                   //   value={credits}
                   onChange={(e) => setCredits(Number(e.target.value))}
-                  placeholder="Enter number of credits"
+                  placeholder="Enter credit amount"
                   className="w-full p-4 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-button-gpt focus:border-button-gpt transition duration-300 hover:shadow-lg"
                 />
                 <div className="absolute inset-y-0 right-3 flex items-center text-gray-400">

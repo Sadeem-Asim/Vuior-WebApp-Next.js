@@ -63,7 +63,8 @@ export const UserAssetsProvider = ({ children }) => {
     // Real-time listener for bills
     const billsQuery = query(
       collection(db, "bills"),
-      where("user_id", "==", user.id)
+      where("user_id", "==", user.id),
+      where("isDeleted", "==", false)
     );
     const unsubscribeBills = onSnapshot(billsQuery, (querySnapshot) => {
       const bills = querySnapshot.docs.map((doc) => ({
@@ -99,7 +100,8 @@ export const UserAssetsProvider = ({ children }) => {
     // Real-time listener for documents
     const documentsQuery = query(
       collection(db, "documents"),
-      where("userId", "==", user.id)
+      where("userId", "==", user.id),
+      where("isDeleted", "==", false)
     );
     const unsubscribeDocuments = onSnapshot(documentsQuery, (querySnapshot) => {
       const documents = querySnapshot.docs.map((doc) => ({

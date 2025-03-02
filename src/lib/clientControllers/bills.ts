@@ -5,7 +5,6 @@ import {
   //   getDoc,
   doc,
   updateDoc,
-  deleteDoc,
   Timestamp,
   // DocumentReference,
   query,
@@ -30,6 +29,7 @@ interface Bill {
   remainingAmount?: any;
   pastDue?: any;
   accountNumber: any;
+  isDeleted?: boolean;
 }
 
 // Create a new bill in Firestore
@@ -37,6 +37,7 @@ const createBill = async (billData: Bill): Promise<string> => {
   try {
     billData.created_at = Timestamp.now();
     billData.updated_at = Timestamp.now();
+    billData.isDeleted = false;
 
     // Adding the bill document to Firestore
     const billRef = await addDoc(collection(db, "bills"), billData);
@@ -58,7 +59,8 @@ const fetchBillsForSpecificUser = async (userId: string) => {
     // Create a query to get bills where the user_id field matches the user reference
     const billsQuery = query(
       collection(db, "bills"),
-      where("user_id", "==", userRef) // Match user_id field with the user reference
+      where("user_id", "==", userRef),
+      where("isDeleted", "==", false)
     );
 
     // Execute the query to fetch bills
@@ -69,7 +71,6 @@ const fetchBillsForSpecificUser = async (userId: string) => {
       id: doc.id,
       ...doc.data(),
     }));
-    console.log("bagarBilla");
 
     return bills; // Return the array of bills
   } catch (error) {
@@ -97,11 +98,13 @@ const updateBill = async (
 const deleteBill = async (billId: string): Promise<void> => {
   try {
     const billDocRef = doc(db, "bills", billId);
-    await deleteDoc(billDocRef);
-    console.log("Bill deleted successfully");
+    await updateDoc(billDocRef, {
+      isDeleted: true,
+    });
+    console.log("Bill marked as deleted successfully");
   } catch (error) {
-    console.error("Error deleting bill:", error);
-    throw new Error("Error deleting bill");
+    console.error("Error marking bill as deleted:", error);
+    throw new Error("Error marking bill as deleted");
   }
 };
 

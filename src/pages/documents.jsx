@@ -17,7 +17,7 @@ import { Tooltip } from "@nextui-org/react";
 
 const DocumentPage = () => {
   const { userDocuments } = useUserAssets();
-  const toast = useToast();
+  const { toast } = useToast();
   const { user } = useAuth();
 
   const handleDocumentUpload = async (event) => {
@@ -41,6 +41,7 @@ const DocumentPage = () => {
           documentType: file.type,
           uploadedAt: new Date(),
           purpose: "Resume",
+          isDeleted: false,
         });
 
         toast({

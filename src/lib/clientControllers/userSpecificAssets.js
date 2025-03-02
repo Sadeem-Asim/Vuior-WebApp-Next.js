@@ -52,7 +52,8 @@ const fetchDocumentsForSpecificUser = async (userId) => {
     // Create a query to get bills where the user_id field matches the user reference
     const documentsQuery = query(
       collection(db, "documents"),
-      where("userId", "==", userId)
+      where("userId", "==", userId),
+      where("isDeleted", "==", false)
     );
 
     // Execute the query to fetch bills
