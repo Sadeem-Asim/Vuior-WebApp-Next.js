@@ -21,3 +21,11 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
 }
+
+declare global {
+  interface Window {
+    Elfsight?: {
+      init: () => void;
+    };
+  }
+}
