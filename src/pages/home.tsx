@@ -8,6 +8,13 @@ import FAQs from "../components/redesigned-components/components/faqs";
 import { reactNow } from "../data";
 import ShinyButton from "../components/redesigned-components/components/shiny-button";
 import { useEffect } from "react";
+declare global {
+  interface Window {
+    Elfsight?: {
+      init: () => void;
+    };
+  }
+}
 
 const ElfsightWidget = () => {
   useEffect(() => {
