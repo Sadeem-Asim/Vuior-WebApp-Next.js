@@ -7,10 +7,28 @@ import JoinToday from "../components/redesigned-components/components/join-today
 import FAQs from "../components/redesigned-components/components/faqs";
 import { reactNow } from "../data";
 import ShinyButton from "../components/redesigned-components/components/shiny-button";
+import { useEffect } from "react";
+
+const ElfsightWidget = () => {
+  useEffect(() => {
+    // Ensure Elfsight script is loaded properly
+    if (window.Elfsight) {
+      window.Elfsight.init();
+    }
+  }, []);
+
+  return (
+    <div
+      className="elfsight-app-7c94a90f-3aa7-405a-964a-99d8386171fc"
+      data-elfsight-app-lazy
+    ></div>
+  );
+};
 
 const HomePage = () => {
   return (
     <div>
+      <ElfsightWidget />
       <MaxWidthContainer>
         <Hero />
       </MaxWidthContainer>

@@ -23,6 +23,7 @@ interface Bill {
   is_consolidated?: boolean;
   created_at: Timestamp;
   updated_at: Timestamp;
+  autoPay?: boolean;
 }
 
 const PayEarly = () => {
@@ -35,7 +36,8 @@ const PayEarly = () => {
 
   const unPaidBills = useMemo(() => {
     return userBills.filter(
-      (bill: { status: string }) => bill.status !== "paid"
+      (bill: { autoPay: string; status: string }) =>
+        bill.status !== "paid" && bill.autoPay === "true"
     );
   }, [userBills]);
   // Update context whenever selectedBills changes

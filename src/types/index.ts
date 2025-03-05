@@ -1,4 +1,5 @@
 export interface User {
+  defaultPaymentMethod?: string;
   phoneNo?: string;
   id: string;
   firstName: string;
@@ -13,6 +14,7 @@ export interface User {
   profileLink?: string;
   referralCode?: string;
   redeemedReferralCode?: boolean;
+  stripeCustomerId?: string;
 }
 
 export interface AuthState {

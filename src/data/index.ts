@@ -147,103 +147,147 @@ export const joinUsArr = [
 ];
 export const faqs = [
   {
-    value: "item-1",
+    value: "q1",
     title: "What is Vuior?",
-    content: `Vuior is a member-owned organization committed to diversity, equity, and inclusion. We offer various financial programs and services, including loans, insurance, and bill consolidation, tailored to meet our members' needs.`,
+    content: `Vuior is a comprehensive financial wellness platform designed to help you manage your 
+    household bills, save money through early payment rewards, and reduce debt with expert 
+    guidance. Our services include AI-driven bill optimization, free debt management counseling, 
+    and pre-approval for loan offers from trusted partner lenders—all in one user-friendly platform.`,
   },
   {
-    value: "item-2",
-    title: "How do I become a member of Vuior?",
-    content: `Becoming a member is easy. Simply fill out the membership application on our website. As a member, you will have access to all our programs and become a part owner of Vuior.`,
+    value: "q2",
+    title: "How does Vuior work?",
+    content: `Vuior centralizes your bills in a single dashboard, allowing you to:
+    - **Manage Bills:** Upload or sync your household bills (utilities, rent/mortgage, internet, insurance, etc.).
+    - **Earn Savings:** Get early payment rewards and negotiated discounts when you pay ahead of due dates.
+    - **Debt Management:** Use our free debt management service for personalized recommendations.
+    - **Loan Pre-Approval:** Based on your financial profile and debt assessment, you may qualify for pre-approved loan offers from partner lenders.`,
   },
   {
-    value: "item-3",
-    title: "What are the benefits of Vuior membership?",
-    content: `Members enjoy access to exclusive financial programs, group-negotiated discounts, and personalized services. Our commitment to diversity, equity, and inclusion ensures that we cater to all members' needs, fostering a community-focused environment.`,
+    value: "q3",
+    title: "Is Vuior free to use?",
+    content: `Yes! Vuior’s basic services—including bill management, debt assessment, and access to 
+    educational resources—are completely free for all members. Premium features and enhanced 
+    tools may be available through upgraded membership options.`,
   },
   {
-    value: "item-4",
-    title: "What types of loans does Vuior offer?",
-    content: `Vuior offers a variety of loans, including Auto Loans, Mortgage Loans, Unemployment Loans, Student Loans, Travel Loans, Wedding Loans, Home Improvement Loans, Health Care Loans, Emergency Loans, and Personal Loans.`,
+    value: "q4",
+    title: "What makes Vuior different from other financial apps?",
+    content: `Vuior stands out by combining household bill management with proactive debt reduction 
+    strategies and loan pre-approval services. Our AI-driven insights provide personalized 
+    recommendations, and our free debt management service is designed like a financial therapy 
+    session—supportive, non-judgmental, and action-oriented.`,
+  },
+  // Bill Management & Early Payment Rewards
+  {
+    value: "q5",
+    title: "What types of bills can I manage with Vuior?",
+    content: `You can manage a wide range of household bills, including:
+    - Utilities (electricity, water, gas)
+    - Rent or mortgage payments
+    - Internet, phone, and cable services
+    - Insurance premiums
+    - Other recurring expenses`,
   },
   {
-    value: "item-5",
-    title: "Do you offer loans to individuals with poor credit?",
-    content: `Yes, Vuior welcomes all credit profiles. We offer in-house financing and special financing options to provide flexibility and support to our members.`,
+    value: "q6",
+    title: "How do the early payment rewards work?",
+    content: `When you pay your bills ahead of their due dates, you can earn savings. 
+    - **Example:** If your utility bill is $300 due on the 10th and you pay on the 3rd, you might receive a **10% discount—saving you $30.**
+    The exact savings percentage varies by bill type and provider rates.`,
+  },
+  // Debt Management Service
+  {
+    value: "q7",
+    title: "What is Vuior’s Debt Management Service?",
+    content: `Our free debt management service helps you assess and reduce your debt. You’ll receive personalized recommendations and have access to free consultations with expert debt advisors.`,
   },
   {
-    value: "item-6",
-    title: "What documents are required to apply for a loan?",
-    content: `You will need to provide bank statements, proof of income, and proof of residence. Additional documentation may be required depending on the type of loan you are applying for.`,
+    value: "q8",
+    title: "How does the Debt Assessment Questionnaire work?",
+    content: `The questionnaire covers:
+    - Your total outstanding debt
+    - Monthly income & non-debt expenses
+    - Credit health & payment history
+    - Your financial goals (e.g., lowering interest rates, consolidating debt)`,
   },
   {
-    value: "item-7",
-    title:
-      "How do you ensure compliance with US laws and regulations for loans?",
-    content: `Vuior adheres to all applicable federal and state laws and regulations. Our loan programs are designed to comply with the Truth in Lending Act (TILA), Equal Credit Opportunity Act (ECOA), and Fair Credit Reporting Act (FCRA), among others. We ensure transparency and fairness in all our lending practices.`,
+    value: "q9",
+    title: "What happens after I complete the Debt Assessment?",
+    content: `Once completed, you’ll receive a summary of your financial situation with recommendations. You’ll also have the option to schedule a **free consultation** with a Vuior debt advisor for personalized support.`,
+  },
+  // Loan Pre-Approval Process
+  {
+    value: "q10",
+    title: "What is the loan pre-approval process?",
+    content: `After completing your Debt Assessment, Vuior determines if you qualify for pre-approved loan offers from partner lenders.  
+    - **Example:** "Based on your profile, you qualify for a loan offer of up to $5,000 at competitive terms."  
+    Final approval is subject to lender verification.`,
   },
   {
-    value: "item-8",
-    title: "What is the Household Bill Consolidation Program?",
-    content: `This program offers group-negotiated discounts through partnerships with highly-rated carriers and providers, helping you save on your household bills by consolidating them into a single manageable payment.`,
+    value: "q11",
+    title: "How does pre-approval benefit me?",
+    content: `Pre-approval gives you quick access to funds to consolidate debt or manage expenses. You can compare multiple loan offers and choose the one that best fits your repayment needs.`,
+  },
+  // User Dashboard & Account Management
+  {
+    value: "q12",
+    title: "What can I see on my Vuior dashboard?",
+    content: `Your dashboard provides a comprehensive view of your finances, including:
+    - **Bill Overview**: Current bills, due dates, and payment statuses.
+    - **Early Payment Rewards**: Savings earned from early payments.
+    - **Debt Health Score**: Personalized recommendations for reducing debt.
+    - **Loan Pre-Approval Status**: Available loan offers based on your profile.`,
   },
   {
-    value: "item-9",
-    title: "What types of bills can be consolidated?",
-    content: `You can consolidate various household bills, including Mortgage/Rent, Utilities, Internet/Cable, Phone/Cellular, Insurance, and Transportation expenses.`,
+    value: "q13",
+    title: "How do I schedule a free consultation?",
+    content: `After completing your Debt Assessment, you can schedule a free consultation via your dashboard using Vuior's integrated appointment system.`,
+  },
+  // Security & Data Protection
+  {
+    value: "q14",
+    title: "How does Vuior protect my financial information?",
+    content: `Vuior employs industry-standard encryption, secure data storage, and regular security audits. We comply with data protection laws to safeguard your privacy.`,
   },
   {
-    value: "item-10",
-    title:
-      "How much can I save through the Household Bill Consolidation Program?",
-    content: `Members can save up to 25% on their household bills through our negotiated group discounts.`,
+    value: "q15",
+    title: "Can I update my personal or financial information?",
+    content: `Yes! You can update your details directly from your Vuior dashboard at any time.`,
+  },
+  // Educational Resources
+  {
+    value: "q16",
+    title: "What educational resources does Vuior offer?",
+    content: `Vuior provides free resources including:
+    - Articles & videos on debt management and budgeting
+    - Interactive calculators for savings & debt consolidation
+    - Webinars on credit counseling and financial planning`,
+  },
+  // Customer Support
+  {
+    value: "q17",
+    title: "How can I contact Vuior support?",
+    content: `You can reach us via:
+    - **Email:** [Support Email]
+    - **Phone:** [Support Phone Number]
+    - **Live Chat:** Available on our website during business hours`,
   },
   {
-    value: "item-11",
-    title:
-      "What are the eligibility requirements for the Household Bill Consolidation Program?",
-    content: `Eligibility requirements include providing proof of residence, proof of income, and information about your current bills. We welcome all credit profiles and offer flexible payment options.`,
+    value: "q18",
+    title: "What should I do if I have account issues?",
+    content: `If you experience any issues, contact our support team immediately. We’ll assist with troubleshooting, account updates, and other concerns.`,
+  },
+  // Compliance & Legal Information
+  {
+    value: "q19",
+    title: "Does Vuior comply with financial regulations?",
+    content: `Yes! Vuior complies with all applicable financial regulations and data protection laws to ensure secure and transparent financial services.`,
   },
   {
-    value: "item-12",
-    title:
-      "How do you ensure compliance with US laws and regulations for the Bill Consolidation Program?",
-    content: `Vuior complies with all relevant regulations, including the Fair Debt Collection Practices Act (FDCPA) and the Federal Trade Commission (FTC) guidelines. We ensure that our bill consolidation services are transparent, fair, and in the best interest of our members.`,
-  },
-  {
-    value: "item-13",
-    title: "How does Vuior protect my personal information?",
-    content: `Vuior is committed to protecting your privacy. We implement strict security measures to safeguard your personal information and comply with the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA). Please refer to our Privacy Notice for detailed information.`,
-  },
-  {
-    value: "item-14",
-    title: "What information does Vuior collect and why?",
-    content: `We collect information necessary to provide our services, including contact details, financial information, and proof of identity. This information helps us verify your eligibility and tailor our services to meet your needs.`,
-  },
-  {
-    value: "item-15",
-    title: "Can I opt-out of data collection?",
-    content: `Yes, you can opt-out of certain data collection practices by contacting our customer service team. However, opting out may limit your access to some of our services.`,
-  },
-  {
-    value: "item-16",
-    title: "How do I access or update my personal information?",
-    content: `You can access and update your personal information by logging into your Vuior account or contacting our customer service team.`,
-  },
-  {
-    value: "item-17",
-    title: "What is Vuior's commitment to diversity, equity, and inclusion?",
-    content: `Vuior is dedicated to fostering an inclusive environment where all members feel valued and supported. Our programs are designed to meet the diverse needs of our community, and we actively promote equity in all our practices.`,
-  },
-  {
-    value: "item-18",
-    title: "How can I contact Vuior for more information?",
-    content: `You can contact us through our website's contact form, email us at support@vuio.com, or call our customer service hotline at 1-800-123-4567. Our team is here to assist you with any questions or concerns.`,
-  },
-  {
-    value: "item-19",
-    title: "Where can I find Vuior's Terms and Conditions and Privacy Notice?",
-    content: `Our Terms and Conditions and Privacy Notice are available on our website. We encourage all members to review these documents to understand their rights and responsibilities.`,
+    value: "q20",
+    title: "Where can I find Vuior's Privacy Policy and Terms of Service?",
+    content: `Our Privacy Policy and Terms of Service are available at the bottom of every Vuior webpage.`,
   },
 ];
 

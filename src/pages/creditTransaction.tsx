@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@nextui-org/button";
 import { useToast } from "@/hooks/use-toast";
 import { loadStripe } from "@stripe/stripe-js";
+import CurrencyFormat from "react-currency-format";
+import { Input } from "@nextui-org/input";
 const Transaction = ({ add }: any) => {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -154,15 +156,24 @@ const Transaction = ({ add }: any) => {
               <label className="block mb-2 text-lg font-semibold text-gray-800 hover:text-button-gpt transition duration-300">
                 Number of Credits:
               </label>
-              <div className="relative w-2/3">
-                <input
-                  type="number"
-                  //   value={credits}
-                  onChange={(e) => setCredits(Number(e.target.value))}
+              <div className="relative w-2/3 pt-5">
+                <CurrencyFormat
+                  customInput={Input}
+                  onChange={(e) => {
+                    const number = parseInt(
+                      e.target.value.replace(/[$,]/g, ""),
+                      10
+                    );
+                    setCredits(number);
+                  }}
                   placeholder="Enter credit amount"
-                  className="w-full p-4 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-button-gpt focus:border-button-gpt transition duration-300 hover:shadow-lg"
+                  className="w-full  text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-button-gpt focus:border-button-gpt transition duration-300 hover:shadow-lg"
+                  type="tel"
+                  prefix="$"
+                  thousandSeparator={true}
                 />
-                <div className="absolute inset-y-0 right-3 flex items-center text-gray-400">
+
+                <div className="absolute inset-y-10 right-3 flex items-center text-gray-400">
                   💰
                 </div>
               </div>

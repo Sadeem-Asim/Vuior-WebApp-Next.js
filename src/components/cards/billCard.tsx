@@ -1,20 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
-import { Grid, IconButton, Stack, Chip } from "@mui/material";
-// import { useRouter } from "next/router";
+import { useState } from "react";
+import {
+  Grid,
+  IconButton,
+  Stack,
+  Chip,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
+
+// import { Grid, IconButton, Stack, Chip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import EditIcon from '@mui/icons-material/Edit'
-// import { format } from "date-fns";
+
 import EastIcon from "@mui/icons-material/East";
 import CurrencyFormat from "react-currency-format";
 
 import { deleteBill } from "@/lib/clientControllers/bills";
 import { Button } from "@nextui-org/button";
-// import { useNavigate } from "react-router-dom";
-// import { Button } from "@nextui-org/button";
-// import { on } from "events";
-// import * as moment from "moment/moment";
-
+import { db } from "@/lib/firebaseConfig";
+import { doc, updateDoc } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 const Colors = [
   "#76D7C4",
   "#48C9B0",
@@ -38,13 +45,6 @@ const Colors = [
   "#8E44AD",
 ];
 
-// interface Bill {
-//   billName: string;
-//   amountDue: string;
-//   dueDate: string;
-//   priority?: boolean;
-// }
-
 interface BillCardProps {
   bill?: any;
   cardtype?: string;
@@ -55,7 +55,68 @@ interface BillCardProps {
 }
 
 export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
-  useEffect(() => {}, []);
+  const [autoPayEnabled, setAutoPayEnabled] = useState(bill?.autoPay || false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Function to calculate next payment date (1 month from today)
+  const getPaymentDate = (dueDate: any) => {
+    const today = new Date();
+    const due = new Date(dueDate);
+
+    // If the due date has already passed, set AutoPay to tomorrow
+    if (due < today) {
+      const tomorrow = new Date();
+      tomorrow.setDate(today.getDate() + 1);
+      return tomorrow.toISOString().split("T")[0];
+    }
+
+    // Otherwise, set AutoPay to 15 days before the due date
+    const paymentDate = new Date(due);
+    paymentDate.setDate(due.getDate() - 15);
+
+    // If the calculated AutoPay date is already past today, use tomorrow
+    if (paymentDate < today) {
+      const tomorrow = new Date();
+      tomorrow.setDate(today.getDate() + 1);
+      return tomorrow.toISOString().split("T")[0];
+    }
+
+    return paymentDate.toISOString().split("T")[0];
+  };
+
+  // Enable AutoPay and update Firestore
+  const enableAutoPay = async () => {
+    try {
+      if (!user) return;
+
+      if (!autoPayEnabled) {
+        if (!user.defaultPaymentMethod) {
+          navigate("/setupAutoPay");
+        }
+        const billRef = doc(db, "bills", bill.id);
+        await updateDoc(billRef, {
+          autoPay: true,
+          nextPaymentDate: getPaymentDate(bill.dueDate),
+          // status: "pending",
+        });
+
+        setAutoPayEnabled(true);
+      } else {
+        const billRef = doc(db, "bills", bill.id);
+        await updateDoc(billRef, {
+          autoPay: false,
+          // nextPaymentDate: getNextMonthDate(),
+          // status: "unpaid",
+        });
+
+        setAutoPayEnabled(false);
+      }
+    } catch (error) {
+      console.error("Error enabling AutoPay:", error);
+      alert("Failed to enable AutoPay. Try again.");
+    }
+  };
 
   const [isFlipped, setIsFlipped] = useState(false);
   // const navigate = useNavigate();
@@ -66,19 +127,7 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
 
   async function deleteCard() {
     await deleteBill(bill?.id);
-    // navigate("/bills");
-    // window.location.reload();
   }
-  // console.log('chytr', bill)
-  useEffect(() => {
-    // if (props.cardtype === "milestonecard") {
-    //   setIsFlipped(true);
-    // } else if (props.cardtype === "prioritycard") {
-    //   setIsFlipped(false);
-    // } else {
-    //   setIsFlipped(false);
-    // }
-  }, []);
 
   return (
     <Grid item sx={{ margin: "1em 1em" }}>
@@ -245,7 +294,11 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
               wordWrap: "break-word",
             }}
           >
-            {bill?.status || "unpaid"}
+            {bill?.status === "paid"
+              ? "paid"
+              : bill.autoPay === true
+              ? "AutoPay"
+              : "unpaid"}
           </div>
           <div
             className="DueLabel"
@@ -327,7 +380,7 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
             }}
           ></div>
 
-          {/* <div
+          <div
             className="flipbutton"
             style={{
               // width: 75,
@@ -340,7 +393,7 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
             <IconButton aria-label="flip" color="primary" onClick={handleFlip}>
               <EastIcon />
             </IconButton>
-          </div> */}
+          </div>
 
           <div
             className="editbuttons"
@@ -423,15 +476,18 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
               src="https://firebasestorage.googleapis.com/v0/b/payoff-genius-app-8deb5/o/Frame.png?alt=media&token=81717bd6-32ac-4db5-8e4b-7b62979bf0b8"
             />
           </div>
-
-          {/* <Button name="Pay Now" /> */}
           <div
             className="lendername"
             style={{
-              width: 155,
-              height: 144,
-              left: 115,
-              top: 70,
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              // left: 115,
+              // top: 70,
               position: "absolute",
               color: "white",
               fontSize: 30,
@@ -441,8 +497,26 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
               // backgroundColor:'red'
             }}
           >
-            <Button className="bg-blue-500 text-white p-5 shadow-lg rounded-md ">
-              Pay Now
+            <RadioGroup value={autoPayEnabled ? "enabled" : "disabled"}>
+              <FormControlLabel
+                value="enabled"
+                control={<Radio disabled={autoPayEnabled} />}
+                label="AutoPay Enabled"
+              />
+              <FormControlLabel
+                value="disabled"
+                control={<Radio disabled={!autoPayEnabled} />}
+                label="AutoPay Disabled"
+              />
+            </RadioGroup>
+
+            {/* Pay Now Button */}
+            <Button
+              onPress={enableAutoPay}
+              // disabled={autoPayEnabled}
+              className="bg-button-gpt text-white p-3 shadow-lg rounded-md mt-4"
+            >
+              {autoPayEnabled ? "Disable AutoPlay" : "Enable AutoPay"}
             </Button>
           </div>
 
@@ -466,225 +540,6 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
               <EastIcon />
             </IconButton>
           </div>
-
-          {/* <div
-            className="chartlabel"
-            style={{
-              width: 86,
-              height: 13,
-              left: 198,
-              top: 37,
-              position: "absolute",
-              opacity: 0.9,
-              color: "white",
-              fontSize: 14,
-              fontFamily: "Rubik",
-              fontWeight: "500",
-              letterSpacing: 0.5,
-              wordWrap: "break-word",
-              textAlign: "center",
-            }}
-          >
-            {(12.43).toFixed(0)}% <br /> Paid{" "}
-          </div> */}
-
-          {/* <div
-            className="chartlabel"
-            style={{
-              width: 86,
-              height: 13,
-              left: 198,
-              top: 37,
-              position: "absolute",
-              opacity: 0.9,
-              color: "white",
-              fontSize: 14,
-              fontFamily: "Rubik",
-              fontWeight: "500",
-              letterSpacing: 0.5,
-              wordWrap: "break-word",
-              textAlign: "center",
-            }}
-          >
-            {(10021.32).toFixed(0)}% <br /> Paid{" "}
-          </div>
-
-          <div>
-            <div
-              className="payoffDate"
-              style={{
-                width: 86,
-                height: 13,
-                left: 210,
-                top: 146,
-                position: "absolute",
-                opacity: 0.9,
-                color: "white",
-                fontSize: 14,
-                fontFamily: "Rubik",
-                fontWeight: "500",
-                letterSpacing: 0.5,
-                wordWrap: "break-word",
-              }}
-            >
-              12/12/2202
-            </div>
-            <div
-              className="DueLabel"
-              style={{
-                width: 115,
-                height: 13,
-                left: 210,
-                top: 124,
-                position: "absolute",
-                opacity: 0.75,
-                color: "white",
-                fontSize: 14,
-                fontFamily: "Rubik",
-                fontWeight: "500",
-                wordWrap: "break-word",
-              }}
-            >
-              Payoff Date
-            </div>
-          </div>
-
-          <div>
-            <div
-              className="nextDueDate"
-              style={{
-                width: 86,
-                height: 13,
-                left: 30,
-                top: 146,
-                position: "absolute",
-                opacity: 0.9,
-                color: "white",
-                fontSize: 14,
-                fontFamily: "Rubik",
-                fontWeight: "500",
-                letterSpacing: 0.5,
-                wordWrap: "break-word",
-              }}
-            >
-              12/12/2203
-            </div>
-            <div
-              className="nextDueDate"
-              style={{
-                width: 115,
-                height: 13,
-                left: 30,
-                top: 124,
-                position: "absolute",
-                opacity: 0.75,
-                color: "white",
-                fontSize: 14,
-                fontFamily: "Rubik",
-                fontWeight: "500",
-                wordWrap: "break-word",
-              }}
-            > */}
-          {/* Due Date
-            </div>
-          </div>  */}
-
-          {/* <div
-            className="minpay"
-            style={{
-              width: 86,
-              height: 13,
-              left: 110,
-              top: 146,
-              position: "absolute",
-              opacity: 0.9,
-              color: "white",
-              fontSize: 14,
-              fontFamily: "Rubik",
-              fontWeight: "500",
-              letterSpacing: 0.5,
-              wordWrap: "break-word",
-            }}
-          >
-            <NumericFormat
-              value={file.minpay}
-              displayType={"text"}
-              thousandSeparator={true}
-              prefix={"$"}
-            />
-          </div>
-          <div
-            className="minLabel"
-            style={{
-              width: 115,
-              height: 13,
-              left: 110,
-              top: 124,
-              position: "absolute",
-              opacity: 0.75,
-              color: "white",
-              fontSize: 14,
-              fontFamily: "Rubik",
-              fontWeight: "500",
-              wordWrap: "break-word",
-            }}
-          >
-            Min Payment
-          </div>
-
-          <div
-            className="flipbutton"
-            style={{
-              right: 5,
-              top: 65,
-              position: "absolute",
-            }}
-          >
-            <IconButton aria-label="flip" color="primary" onClick={handleFlip}>
-              <EastIcon />
-            </IconButton>
-          </div>
-
-          {/* <div
-            className="Balance"
-            style={{
-              width: 145,
-              height: 26,
-              left: 30,
-              top: 72,
-              position: "absolute",
-              color: "white",
-              fontSize: 14,
-              fontFamily: "Rubik",
-              fontWeight: "500",
-              wordWrap: "break-word",
-            }}
-          >
-            <NumericFormat
-              value={file.originalBalance}
-              displayType={"text"}
-              thousandSeparator={true}
-              prefix={"$"}
-            />
-          </div> */}
-          {/* <div
-            className="OrigBalance"
-            style={{
-              width: 126,
-              height: 13,
-              left: 30,
-              top: 50,
-              position: "absolute",
-              opacity: 0.75,
-              color: "white",
-              fontSize: 14,
-              fontFamily: "Rubik",
-              fontWeight: "500",
-              wordWrap: "break-word",
-            }}
-          >
-            Original Balance
-          </div> */}
         </div>
       </div>
     </Grid>

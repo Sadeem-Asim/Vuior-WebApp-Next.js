@@ -32,27 +32,27 @@ const Hero = () => {
     {
       src: At,
       alt: "At",
-      width: 200,
+      width: 100,
     },
     {
       src: SouthernCompany,
       alt: "SouthernCompany",
-      width: 200,
+      width: 100,
     },
     {
       src: Mastercard,
       alt: "Mastercard",
-      width: 200,
+      width: 100,
     },
     {
       src: Verizon,
       alt: "Verizon",
-      width: 200,
+      width: 100,
     },
     {
       src: Exelon,
       alt: "Exelon",
-      width: 200,
+      width: "8rem",
     },
   ];
   const words = text.split(" ");
@@ -134,19 +134,29 @@ const Hero = () => {
         />
       </div>
       <motion.div transition={transition} variants={variants}>
-        <section className="pt-[20vh] px-2 opacity-60">
+        <section className="pt-[10vh] sm:pt-[20vh] px-2 opacity-60">
           <div className="w-full">
             <div className="flex flex-wrap justify-center items-center  gap-6 gap-x-20 ">
               {logos.map((logo, index) => (
                 <div
                   key={index}
-                  className="relative flex items-center justify-center "
+                  className="relative flex items-center justify-center flex-row"
                 >
-                  <Image
-                    src={logo.src}
-                    alt={logo.alt}
-                    className="object-contain h-[10vw] sm:h-[5vw] "
-                  />
+                  {logo.width !== 100 ? (
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      className="object-contain  rounded-none h-[10vw] sm:h-[5vw]"
+                      height={logo.width}
+                    />
+                  ) : (
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      className="object-contain h-[10vw] sm:h-[5vw] rounded-none"
+                      // width={logo.width}
+                    />
+                  )}
                 </div>
               ))}
             </div>

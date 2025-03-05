@@ -14,6 +14,7 @@ import RegisterUser from "../pages/register-user";
 import ForgetPassword from "../pages/forget-password";
 import DashboardHome from "../pages/dashboardHome";
 import PayEarly from "../pages/payEarly";
+import SetupAutoPay from "@/pages/setupAutoPay";
 import Transaction from "../pages/transaction";
 // import ResetPassword from "../pages/reset-pasword";
 import OpenPositions from "../pages/open-positions";
@@ -38,7 +39,11 @@ import CreateBill from "../components/ui/billForm/form";
 
 import PaymentHistory from "../pages/payments-history";
 import DocumentPage from "@/pages/documents";
-
+const stripePromise = loadStripe(
+  "pk_test_51L42JBBjhuRU5cGW2oXLq1IubYuai5huuBi0eMrODKEwvZDSe7KgTMWStEAxOVIcj9nPxWiaOvHEm7pEqhoa8vB400KVHlGKBY"
+);
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 // import DashboardSettings from "../pages/DashboardSettings"
 
 export const router = createBrowserRouter([
@@ -183,6 +188,24 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <PayEarly />,
+      },
+    ],
+  },
+  {
+    path: "setupAutoPay",
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: (
+          <Elements stripe={stripePromise}>
+            <SetupAutoPay />
+          </Elements>
+        ),
       },
     ],
   },

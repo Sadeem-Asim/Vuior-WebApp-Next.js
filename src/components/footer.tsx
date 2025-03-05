@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { SocialIcon } from "react-social-icons";
 
 const Footer = () => {
   return (
@@ -13,39 +14,40 @@ const Footer = () => {
             <div className="mt-[40px]">
               <div className="flex items-end gap-[30px] mt-[30px]">
                 <div className="cursor-pointer">
-                  <a
-                    href="https://www.facebook.com/profile.php?id=61557178921559"
+                  <SocialIcon
+                    url="https://x.com/vuiorhq?t=bh45yGMB-pvwIZvkF_QKuQ&s=09"
+                    bgColor="#095C46"
+                    fgColor="white"
                     target="_blank"
                     rel="noopener noreferrer"
-                  >
-                    <img
-                      src="/assets/icons/facebookLogo.png"
-                      alt="twitter"
-                      style={{
-                        width: 30,
-                        height: 30,
-                        background: "white",
-                      }}
-                    />
-                  </a>
+                  />
                 </div>
                 <div className="cursor-pointer">
-                  <a
-                    href="https://www.instagram.com/vuiorhq"
+                  <SocialIcon
+                    url="https://www.facebook.com/profile.php?id=61557178921559"
+                    bgColor="#095C46"
+                    fgColor="white"
                     target="_blank"
                     rel="noopener noreferrer"
-                  >
-                    <img src="/assets/icons/instgram.png" alt="instagram" />
-                  </a>
+                  />
                 </div>
                 <div className="cursor-pointer">
-                  <a
-                    href="https://www.linkedin.com/company/vuior-hq"
+                  <SocialIcon
+                    url="https://www.instagram.com/vuiorhq"
+                    bgColor="#095C46"
+                    fgColor="white"
                     target="_blank"
                     rel="noopener noreferrer"
-                  >
-                    <img src="/assets/icons/linkedin.png" alt="linkedin" />
-                  </a>
+                  />
+                </div>
+                <div className="cursor-pointer">
+                  <SocialIcon
+                    url="https://www.linkedin.com/company/vuior-hq"
+                    bgColor="#095C46"
+                    fgColor="white"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
                 </div>
               </div>
             </div>

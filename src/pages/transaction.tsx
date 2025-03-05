@@ -71,10 +71,6 @@ const Transaction = () => {
     }
   };
 
-  const handleCreditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCreditInput(Number(e.target.value));
-  };
-
   const makePayment = async () => {
     const stripe = await loadStripe(
       "pk_test_51L42JBBjhuRU5cGW2oXLq1IubYuai5huuBi0eMrODKEwvZDSe7KgTMWStEAxOVIcj9nPxWiaOvHEm7pEqhoa8vB400KVHlGKBY"
@@ -199,14 +195,32 @@ const Transaction = () => {
                 />
               </span>
             </p>
-            <TextField
+            <CurrencyFormat
+              customInput={TextField}
+              onChange={(e) => {
+                const number = parseInt(
+                  e.target.value.replace(/[$,]/g, ""),
+                  10
+                );
+                setCreditInput(number);
+              }}
+              label="Enter Credit Amount"
+              fullWidth
+              variant="outlined"
+              // placeholder="Enter credit amount"
+              // className="w-full  text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-button-gpt focus:border-button-gpt transition duration-300 hover:shadow-lg"
+              type="tel"
+              prefix="$"
+              thousandSeparator={true}
+            />
+            {/* <TextField
               type="number"
               label="Enter Credit Amount"
               // value={creditInput}
               onChange={handleCreditChange}
               fullWidth
               variant="outlined"
-            />
+            /> */}
             <div className="flex justify-end mt-6">
               <MuiButton
                 variant="outlined"

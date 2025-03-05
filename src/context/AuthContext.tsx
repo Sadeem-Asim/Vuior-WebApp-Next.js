@@ -67,6 +67,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 redeemedReferralCode: userData.redeemedReferralCode,
                 availableCredits: userData.availableCredits,
                 createdAt: userData.createdAt,
+                autoPay: userData.autoPay || false,
+                defaultPaymentMethod: userData.defaultPaymentMethod || null,
+                stripeCustomerId: userData.stripeCustomerId || null,
               };
 
               setUser(customUser);

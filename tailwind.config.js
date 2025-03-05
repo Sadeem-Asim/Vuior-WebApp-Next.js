@@ -19,6 +19,7 @@ export default {
       colors: {
         "dark-white": "#f8f5fe",
         "button-gpt": "#10a37f",
+        "button-yellow": "#EAB308",
         "button-red": "#FF0000",
         "button-gpt-dark":
           // '#1074a3',

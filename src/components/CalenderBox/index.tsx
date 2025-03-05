@@ -130,16 +130,47 @@ const CalendarBox = () => {
 
                       const isMarked = !!markedBill;
                       const isUnpaid = markedBill?.status === "unpaid";
-                      const daysLeft = day - new Date().getDate();
+                      const isPending = markedBill?.status === "pending";
+                      const today = new Date();
+                      const currentDate = today.getDate();
+                      const currentMonthIndex = today.getMonth();
+                      // const currentYear = today.getFullYear();
+                      console.log(currentMonth);
+                      // Determine if the `day` belongs to the next month
+                      const isNextMonth =
+                        currentMonthIndex !== Number(currentMonth);
+
+                      // If the bill is in the next month, calculate days remaining correctly
+                      let daysLeft;
+                      if (isNextMonth) {
+                        const lastDayOfCurrentMonth = new Date(
+                          currentYear,
+                          currentMonthIndex + 1,
+                          0
+                        ).getDate();
+                        daysLeft = lastDayOfCurrentMonth - currentDate + day;
+                      } else {
+                        daysLeft = day - currentDate;
+                      }
+
+                      // Ensure `daysLeft` is always a positive number
+                      daysLeft = Math.max(daysLeft, 0);
+
                       const savings = calculateSavingsPercentage(daysLeft);
+
+                      // const daysLeft = day - new Date().getDate();
+                      // const savings = calculateSavingsPercentage(daysLeft);
 
                       return (
                         <td
                           key={colIndex}
                           className={`relative h-24 p-1 transition duration-500 border cursor-pointer ease border-stroke hover:bg-gray-2 dark:border-dark-3 dark:hover:bg-dark-2 md:h-25 md:p-6 xl:h-31 ${
                             isMarked
-                              ? (isUnpaid ? "bg-button-red" : "bg-button-gpt") +
-                                " text-white"
+                              ? (isUnpaid
+                                  ? "bg-button-red"
+                                  : isPending
+                                  ? "bg-button-yellow"
+                                  : "bg-button-gpt") + " text-white"
                               : "bg-transparent"
                           }`}
                           onMouseEnter={() => isUnpaid && setHoveredDay(day)}
