@@ -15,7 +15,6 @@ declare global {
     };
   }
 }
-
 const ElfsightWidget = () => {
   useEffect(() => {
     // Ensure Elfsight script is loaded properly
