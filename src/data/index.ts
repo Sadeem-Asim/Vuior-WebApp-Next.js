@@ -149,145 +149,154 @@ export const faqs = [
   {
     value: "q1",
     title: "What is Vuior?",
-    content: `Vuior is a comprehensive financial wellness platform designed to help you manage your 
-    household bills, save money through early payment rewards, and reduce debt with expert 
-    guidance. Our services include AI-driven bill optimization, free debt management counseling, 
-    and pre-approval for loan offers from trusted partner lenders—all in one user-friendly platform.`,
+    content: `Vuior is a free, innovative platform designed to help you manage your household bills and 
+    save money by paying them early. By consolidating your bills in one place, Vuior analyzes your 
+    payment patterns and negotiates exclusive rates, enabling you to save up to 25% on your bills.`,
   },
   {
     value: "q2",
-    title: "How does Vuior work?",
-    content: `Vuior centralizes your bills in a single dashboard, allowing you to:
-    - **Manage Bills:** Upload or sync your household bills (utilities, rent/mortgage, internet, insurance, etc.).
-    - **Earn Savings:** Get early payment rewards and negotiated discounts when you pay ahead of due dates.
-    - **Debt Management:** Use our free debt management service for personalized recommendations.
-    - **Loan Pre-Approval:** Based on your financial profile and debt assessment, you may qualify for pre-approved loan offers from partner lenders.`,
+    title: "Who can join Vuior?",
+    content: `Vuior is open to everyone! There are no credit checks or fees to join. If you manage 
+    household bills, Vuior is here to help you streamline payments and unlock savings.`,
   },
   {
     value: "q3",
-    title: "Is Vuior free to use?",
-    content: `Yes! Vuior’s basic services—including bill management, debt assessment, and access to 
-    educational resources—are completely free for all members. Premium features and enhanced 
-    tools may be available through upgraded membership options.`,
+    title: "How does Vuior help me save money?",
+    content: `Vuior’s platform is built around the principle of “Pay Early, Save Big.” By analyzing your bills, 
+    due dates, and payment habits, our system identifies opportunities for early payment discounts 
+    and exclusive negotiated rates. In some cases, you can save up to 25% simply by paying ahead 
+    of your bill’s due date.`,
   },
+  // Bill Management Services
   {
     value: "q4",
-    title: "What makes Vuior different from other financial apps?",
-    content: `Vuior stands out by combining household bill management with proactive debt reduction 
-    strategies and loan pre-approval services. Our AI-driven insights provide personalized 
-    recommendations, and our free debt management service is designed like a financial therapy 
-    session—supportive, non-judgmental, and action-oriented.`,
+    title: "What types of bills can I manage with Vuior?",
+    content: `Vuior is designed to handle a wide variety of household bills, including:
+    - Utilities (electricity, water, gas)
+    - Rent and mortgages
+    - Phone and internet services
+    - Cable and streaming subscriptions
+    - Insurance premiums
+    - And more!`,
   },
-  // Bill Management & Early Payment Rewards
   {
     value: "q5",
-    title: "What types of bills can I manage with Vuior?",
-    content: `You can manage a wide range of household bills, including:
-    - Utilities (electricity, water, gas)
-    - Rent or mortgage payments
-    - Internet, phone, and cable services
-    - Insurance premiums
-    - Other recurring expenses`,
+    title: "How does the early payment discount work?",
+    content: `When you pay your bills before the due date, Vuior automatically applies savings based on 
+    our negotiated rates. For example, if your utility bill is $300 due on the 10th and you pay on the 
+    3rd (7 days early), you could save around 10% or $30. Our platform calculates these savings for 
+    each bill, giving you a clear view of your total monthly savings.`,
   },
   {
     value: "q6",
-    title: "How do the early payment rewards work?",
-    content: `When you pay your bills ahead of their due dates, you can earn savings. 
-    - **Example:** If your utility bill is $300 due on the 10th and you pay on the 3rd, you might receive a **10% discount—saving you $30.**
-    The exact savings percentage varies by bill type and provider rates.`,
+    title: "How do I know how much I can save?",
+    content: `Your Vuior dashboard displays:
+    - A detailed Bill Overview with due dates, amounts, and savings estimates.
+    - A Savings Tracker that shows your cumulative savings (e.g., “Total Monthly Savings: $255”).
+    - Automated Alerts that remind you of upcoming bills and the benefits of paying early.
+    
+    **Example:**  
+    Imagine you have two bills:  
+    - A $300 utility bill due on the 10th. You pay on the 3rd, saving 10% ($30).  
+    - A $1,500 rent payment due on the 1st. You pay on the 24th of the previous month, saving 15% ($225).  
+    
+    Your dashboard would show:  
+    **Total Monthly Savings: $30 + $225 = $255.**`,
   },
-  // Debt Management Service
+  // Membership and Costs
   {
     value: "q7",
-    title: "What is Vuior’s Debt Management Service?",
-    content: `Our free debt management service helps you assess and reduce your debt. You’ll receive personalized recommendations and have access to free consultations with expert debt advisors.`,
+    title: "Is Vuior free to join?",
+    content: `Yes, Vuior is completely free to join. You can sign up, manage your bills, and access our 
+    savings tools at no cost. Our revenue comes from partnerships and negotiated rates, so there 
+    are no hidden fees for you.`,
   },
   {
     value: "q8",
-    title: "How does the Debt Assessment Questionnaire work?",
-    content: `The questionnaire covers:
-    - Your total outstanding debt
-    - Monthly income & non-debt expenses
-    - Credit health & payment history
-    - Your financial goals (e.g., lowering interest rates, consolidating debt)`,
+    title: "Are there any ongoing fees?",
+    content: `No. Vuior does not charge subscription or management fees for basic bill management 
+    services. Any premium features or value-added services would be clearly communicated and 
+    optional.`,
   },
+  // How Vuior Works
   {
     value: "q9",
-    title: "What happens after I complete the Debt Assessment?",
-    content: `Once completed, you’ll receive a summary of your financial situation with recommendations. You’ll also have the option to schedule a **free consultation** with a Vuior debt advisor for personalized support.`,
+    title: "What is the process for managing my bills with Vuior?",
+    content: `The process is simple:
+    1. **Sign Up:** Create a free Vuior account.
+    2. **Link Your Bills:** Manually enter or sync your bills with our platform.
+    3. **Dashboard Overview:** View your upcoming bills, due dates, and potential savings.
+    4. **Pay Early:** Use our platform to make early payments and instantly save on your bills.
+    5. **Track Savings:** Monitor your savings through our detailed dashboard and receive 
+       automated alerts.`,
   },
-  // Loan Pre-Approval Process
   {
     value: "q10",
-    title: "What is the loan pre-approval process?",
-    content: `After completing your Debt Assessment, Vuior determines if you qualify for pre-approved loan offers from partner lenders.  
-    - **Example:** "Based on your profile, you qualify for a loan offer of up to $5,000 at competitive terms."  
-    Final approval is subject to lender verification.`,
+    title: "What role does AI play in Vuior’s platform?",
+    content: `Our AI analyzes your bill data, payment history, and due dates to:
+    - Identify the optimal time to pay each bill for maximum savings.
+    - Recommend personalized strategies for restructuring your payment schedule.
+    - Continuously update your Savings Tracker to reflect new opportunities. 
+    
+    This intelligent system makes managing your bills easier and more effective.`,
   },
+  // Loan Pre-Approval (Partner-Based)
   {
     value: "q11",
-    title: "How does pre-approval benefit me?",
-    content: `Pre-approval gives you quick access to funds to consolidate debt or manage expenses. You can compare multiple loan offers and choose the one that best fits your repayment needs.`,
+    title: "Does Vuior offer loans?",
+    content: `No, Vuior does not directly offer loans. However, we prequalify eligible members for loan 
+    offers from our trusted lending partners. Our role is to analyze your financial data and help 
+    connect you with lenders who can provide competitive loan options. All final loan terms are set 
+    by our partner lenders.`,
   },
-  // User Dashboard & Account Management
   {
     value: "q12",
-    title: "What can I see on my Vuior dashboard?",
-    content: `Your dashboard provides a comprehensive view of your finances, including:
-    - **Bill Overview**: Current bills, due dates, and payment statuses.
-    - **Early Payment Rewards**: Savings earned from early payments.
-    - **Debt Health Score**: Personalized recommendations for reducing debt.
-    - **Loan Pre-Approval Status**: Available loan offers based on your profile.`,
-  },
-  {
-    value: "q13",
-    title: "How do I schedule a free consultation?",
-    content: `After completing your Debt Assessment, you can schedule a free consultation via your dashboard using Vuior's integrated appointment system.`,
-  },
-  // Security & Data Protection
-  {
-    value: "q14",
-    title: "How does Vuior protect my financial information?",
-    content: `Vuior employs industry-standard encryption, secure data storage, and regular security audits. We comply with data protection laws to safeguard your privacy.`,
-  },
-  {
-    value: "q15",
-    title: "Can I update my personal or financial information?",
-    content: `Yes! You can update your details directly from your Vuior dashboard at any time.`,
+    title: "How do I access pre-approved loan offers?",
+    content: `After completing our Debt Assessment Questionnaire (sent via welcome email), you may see 
+    a notification on your dashboard indicating your pre-qualification status. If you’re eligible, you 
+    can view estimated loan offers and schedule a free consultation to discuss these options further.`,
   },
   // Educational Resources
   {
-    value: "q16",
-    title: "What educational resources does Vuior offer?",
-    content: `Vuior provides free resources including:
-    - Articles & videos on debt management and budgeting
-    - Interactive calculators for savings & debt consolidation
-    - Webinars on credit counseling and financial planning`,
+    value: "q13",
+    title: "What kind of educational resources does Vuior offer?",
+    content: `Vuior provides a comprehensive Resource Center, which includes:
+    - **Articles and Guides:** Learn best practices for bill management and saving.
+    - **Video Tutorials:** Step-by-step videos on how to optimize your payments.
+    - **Interactive Tools:** Calculators to estimate savings, compare payment strategies, and 
+      plan your budget.
+    - **Webinars:** Regular sessions with financial experts to help you improve your financial 
+      literacy.`,
+  },
+  // Security and Compliance
+  {
+    value: "q14",
+    title: "How does Vuior protect my financial data?",
+    content: `Vuior uses industry-standard encryption and robust security measures to ensure your 
+    personal and financial information is secure. We adhere to all relevant data protection laws and 
+    regulations.`,
+  },
+  {
+    value: "q15",
+    title: "Is my data shared with third parties?",
+    content: `Vuior does not sell your data. We may share limited information with trusted partners solely 
+    for the purpose of providing better rates and loan pre-approval services, always in compliance 
+    with data protection regulations.`,
   },
   // Customer Support
   {
+    value: "q16",
+    title: "How can I get help if I have a question or issue?",
+    content: `Vuior offers multiple support channels:
+    - **Email Support:** Reach out to our dedicated support team.
+    - **Live Chat:** Available on the Vuior dashboard during business hours.
+    - **Help Center:** Access a range of articles and FAQs for instant answers.`,
+  },
+  {
     value: "q17",
-    title: "How can I contact Vuior support?",
-    content: `You can reach us via:
-    - **Email:** [Support Email]
-    - **Phone:** [Support Phone Number]
-    - **Live Chat:** Available on our website during business hours`,
-  },
-  {
-    value: "q18",
-    title: "What should I do if I have account issues?",
-    content: `If you experience any issues, contact our support team immediately. We’ll assist with troubleshooting, account updates, and other concerns.`,
-  },
-  // Compliance & Legal Information
-  {
-    value: "q19",
-    title: "Does Vuior comply with financial regulations?",
-    content: `Yes! Vuior complies with all applicable financial regulations and data protection laws to ensure secure and transparent financial services.`,
-  },
-  {
-    value: "q20",
-    title: "Where can I find Vuior's Privacy Policy and Terms of Service?",
-    content: `Our Privacy Policy and Terms of Service are available at the bottom of every Vuior webpage.`,
+    title: "Can I provide feedback about Vuior?",
+    content: `Yes! We value your input. You can submit feedback directly through your dashboard, which 
+    helps us improve our platform and services.`,
   },
 ];
 
@@ -620,45 +629,48 @@ export const initialJobs: JobDescription[] = [
   },
   {
     id: "41c41934-2a21-4ba6-afc2-752f3a1da3f1",
-    title: "Vuior Ambassador Program Manager",
+    title: "Vuior Ambassador",
     department: "Community Engagement",
     location: "Remote",
     type: "Full-time",
     aboutUs:
-      "At Vuior, we're committed to making a positive impact in communities and empowering individuals to achieve financial success. As the Vuior Ambassador Program Manager, you'll play a key role in driving community engagement and promoting our mission.",
+      "Vuior is a free-to-join bill management platform that helps users pay early and save big. Our mission is to simplify bill payments, reduce expenses, and empower financial freedom—one bill at a time.",
     jobSummary:
-      "The Vuior Ambassador Program Manager will manage and grow our ambassador program, engaging passionate individuals to make a positive impact on communities while promoting Vuior's mission.",
+      "Join Vuior as a Vuior Ambassador and become a vital part of our mission to empower individuals and communities through innovative bill management services. As a Vuior Ambassador, you'll represent our brand, promote our platform, and help drive user sign-ups and brand awareness. This role is perfect for motivated individuals who want to earn, engage, and make an impact in their communities.",
     objectives: [
-      "Recruit, train, and support ambassadors to represent Vuior in their communities.",
-      "Develop and implement strategies to increase awareness and engagement with the Vuior brand.",
-      "Foster relationships with ambassadors and community partners to drive impact and growth.",
+      "Actively promote Vuior in your community and generate new user sign-ups through personalized referrals.",
+      "Increase brand awareness by sharing Vuior's mission and services through social media, community events, and direct outreach.",
+      "Engage with communities through events, online platforms, and personal networks to introduce people to Vuior and its benefits.",
     ],
     roleResponsibilities: [
-      "Develop and execute recruitment strategies to attract ambassadors from diverse backgrounds and communities.",
-      "Provide training and resources to ambassadors to empower them to effectively promote Vuior's mission and services.",
-      "Coordinate ambassador activities and events to drive community engagement and awareness.",
-      "Monitor ambassador performance and provide feedback and support as needed.",
-      "Collaborate with internal teams to align ambassador activities with overall marketing and community engagement strategies.",
+      "Promote Vuior and drive user sign-ups through referrals and social media engagement.",
+      "Share Vuior’s mission via social media posts, community events, and word-of-mouth marketing.",
+      "Attend local events or organize community activations to introduce Vuior to potential users.",
+      "Use personal social media platforms to share Vuior’s updates, promotions, and educational content.",
+      "Engage with Vuior’s online community by sharing educational articles, blog posts, and user testimonials.",
+      "Gather feedback from users to help improve Vuior’s platform and services.",
     ],
     dailyAndWeeklyTasks: [
-      "Recruit and onboard new ambassadors through outreach and recruitment campaigns.",
-      "Provide ongoing support and training to ambassadors to ensure their success.",
-      "Plan and coordinate ambassador-led events and initiatives to engage communities.",
-      "Track and analyze ambassador performance and impact metrics.",
-      "Cultivate relationships with community partners and stakeholders to expand Vuior's reach.",
+      "Promote Vuior to your network using referral links.",
+      "Post about Vuior at least 3 times a week on social media.",
+      "Host community info sessions or participate in local events to discuss Vuior’s benefits.",
+      "Educate people about Vuior’s bill management platform and how they can save up to 25% on their bills.",
+      "Join weekly team calls for updates and marketing strategy discussions.",
     ],
     salaryExpectations: {
-      min: 120000,
-      max: 160000,
+      min: 70000,
+      max: 176000,
     },
     benefits: [
-      "Competitive salary with performance-based bonuses",
-      "Opportunities for professional development and career growth",
-      "Flexible work schedule and remote work options",
-      "Supportive and collaborative team environment",
-      "Commitment to diversity, equity, and inclusion",
+      "Performance-based commission with unlimited earning potential.",
+      "Monthly bonuses for reaching signup targets.",
+      "Opportunities for growth into leadership positions.",
+      "Valuable marketing and sales experience.",
+      "Flexible work schedule—you choose when and how you work.",
+      "Be part of a mission-driven company that’s reshaping financial wellness.",
     ],
   },
+
   {
     id: "466691de-381b-4e50-9570-6b525d20668a",
     title: "Customer Service Manager - Excellence Team",
