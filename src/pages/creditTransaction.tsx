@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { loadStripe } from "@stripe/stripe-js";
 import CurrencyFormat from "react-currency-format";
 import { Input } from "@nextui-org/input";
+const stripeApiKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 const Transaction = ({ add }: any) => {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -96,8 +97,10 @@ const Transaction = ({ add }: any) => {
   };
 
   const makePayment = async () => {
+    if (!stripeApiKey) return;
     const stripe = await loadStripe(
-      "pk_test_51L42JBBjhuRU5cGW2oXLq1IubYuai5huuBi0eMrODKEwvZDSe7KgTMWStEAxOVIcj9nPxWiaOvHEm7pEqhoa8vB400KVHlGKBY"
+      stripeApiKey
+      // "pk_test_51L42JBBjhuRU5cGW2oXLq1IubYuai5huuBi0eMrODKEwvZDSe7KgTMWStEAxOVIcj9nPxWiaOvHEm7pEqhoa8vB400KVHlGKBY"
     );
 
     if (!stripe || !user) {
