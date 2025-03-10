@@ -7,8 +7,8 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
-  FormMessage,
+  // FormLabel,
+  // FormMessage,
 } from "../../../ui/form";
 import { useState } from "react";
 import { Input, Textarea } from "@nextui-org/input";
@@ -273,27 +273,16 @@ const ContactForm = () => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={control}
-              name="file"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Upload File</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={(e) => {
-                        field.onChange(e.target.files);
-                        handleFileUpload(e);
-                      }}
-                      isInvalid={!!errors.file?.message}
-                    />
-                  </FormControl>
-                  <FormMessage>{errors.file?.message}</FormMessage>
-                </FormItem>
-              )}
+            <Input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={(e) => {
+                // field.onChange(e.target.files);
+                handleFileUpload(e);
+              }}
+              // isInvalid={!!errors.file?.message}
             />
+
             <Checkbox {...register("agreeToPromotionalMessages")}>
               <p className="text-xs">
                 By checking this box I agree to receive automated promotional
