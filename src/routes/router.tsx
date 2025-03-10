@@ -39,12 +39,12 @@ import CreateBill from "../components/ui/billForm/form";
 
 import PaymentHistory from "../pages/payments-history";
 import DocumentPage from "@/pages/documents";
-const stripePromise = loadStripe(
-  "pk_test_51L42JBBjhuRU5cGW2oXLq1IubYuai5huuBi0eMrODKEwvZDSe7KgTMWStEAxOVIcj9nPxWiaOvHEm7pEqhoa8vB400KVHlGKBY"
-);
-import { Elements } from "@stripe/react-stripe-js";
+const stripeApiKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+
 import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 // import DashboardSettings from "../pages/DashboardSettings"
+const stripePromise = loadStripe(stripeApiKey);
 
 export const router = createBrowserRouter([
   {

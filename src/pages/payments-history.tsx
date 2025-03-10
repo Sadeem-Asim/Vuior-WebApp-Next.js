@@ -5,7 +5,7 @@ const PaymentsHistory = () => {
   const { userPreviousTransactions } = useUserAssets();
   console.log(userPreviousTransactions);
   return (
-    <div className="mt-6 bg-white">
+    <div className="w-full overflow-hidden mt-6 bg-white">
       <div className="text-center">
         <h3 className="text-2xl font-semibold text-gray-800 md:text-4xl">
           Payments History

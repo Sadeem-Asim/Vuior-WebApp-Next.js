@@ -36,8 +36,8 @@ const PayEarly = () => {
 
   const unPaidBills = useMemo(() => {
     return userBills.filter(
-      (bill: { autoPay: string; status: string }) =>
-        bill.status !== "paid" && bill.autoPay === "true"
+      (bill: { autoPay: boolean; status: string }) =>
+        bill.status !== "paid" && bill.autoPay === false
     );
   }, [userBills]);
   // Update context whenever selectedBills changes

@@ -56,32 +56,29 @@ interface BillCardProps {
 
 export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
   const [autoPayEnabled, setAutoPayEnabled] = useState(bill?.autoPay || false);
+  const [nextPaymentDate, setNextPaymentDate] = useState(
+    bill?.nextPaymentDate || false
+  );
+  console.log(nextPaymentDate);
+  console.log(bill?.nextPaymentDate);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Function to calculate next payment date (1 month from today)
   const getPaymentDate = (dueDate: any) => {
     const today = new Date();
     const due = new Date(dueDate);
-
-    // If the due date has already passed, set AutoPay to tomorrow
     if (due < today) {
       const tomorrow = new Date();
       tomorrow.setDate(today.getDate() + 1);
       return tomorrow.toISOString().split("T")[0];
     }
-
-    // Otherwise, set AutoPay to 15 days before the due date
     const paymentDate = new Date(due);
     paymentDate.setDate(due.getDate() - 15);
-
-    // If the calculated AutoPay date is already past today, use tomorrow
     if (paymentDate < today) {
       const tomorrow = new Date();
       tomorrow.setDate(today.getDate() + 1);
       return tomorrow.toISOString().split("T")[0];
     }
-
     return paymentDate.toISOString().split("T")[0];
   };
 
@@ -114,10 +111,18 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
       }
     } catch (error) {
       console.error("Error enabling AutoPay:", error);
-      alert("Failed to enable AutoPay. Try again.");
+      // alert("Failed to enable AutoPay. Try again.");
     }
   };
-
+  const updatePaymentDate = async (date: string) => {
+    if (autoPayEnabled) {
+      const billRef = doc(db, "bills", bill.id);
+      await updateDoc(billRef, {
+        autoPay: true,
+        nextPaymentDate: date,
+      });
+    }
+  };
   const [isFlipped, setIsFlipped] = useState(false);
   // const navigate = useNavigate();
 
@@ -128,6 +133,17 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
   async function deleteCard() {
     await deleteBill(bill?.id);
   }
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  };
+
+  // Format your due date into YYYY-MM-DD (you can pass a Date or string)
+  const formatDate = (date: string | Date) => {
+    const d = new Date(date);
+    return d.toISOString().split("T")[0];
+  };
 
   return (
     <Grid item sx={{ margin: "1em 1em" }}>
@@ -483,41 +499,69 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
               height: "100%",
               display: "flex",
               justifyContent: "center",
-              alignContent: "center",
               alignItems: "center",
               flexDirection: "column",
-              // left: 115,
-              // top: 70,
               position: "absolute",
               color: "white",
               fontSize: 30,
               fontFamily: "Rubik",
               fontWeight: "1000",
               wordWrap: "break-word",
-              // backgroundColor:'red'
             }}
           >
-            <RadioGroup value={autoPayEnabled ? "enabled" : "disabled"}>
-              <FormControlLabel
-                value="enabled"
-                control={<Radio disabled={autoPayEnabled} />}
-                label="AutoPay Enabled"
-              />
-              <FormControlLabel
-                value="disabled"
-                control={<Radio disabled={!autoPayEnabled} />}
-                label="AutoPay Disabled"
-              />
-            </RadioGroup>
+            {/* RadioGroup Display */}
 
-            {/* Pay Now Button */}
-            <Button
-              onPress={enableAutoPay}
-              // disabled={autoPayEnabled}
-              className="bg-button-gpt text-white p-3 shadow-lg rounded-md mt-4"
-            >
-              {autoPayEnabled ? "Disable AutoPlay" : "Enable AutoPay"}
-            </Button>
+            {autoPayEnabled ? (
+              <>
+                {/* Date Picker for Next Payment Date */}
+                {bill?.status === "unpaid" && (
+                  <>
+                    <label className="text-white text-lg mt-4 mb-2">
+                      Select Next Payment Date
+                    </label>
+                    <input
+                      type="date"
+                      value={nextPaymentDate}
+                      onChange={(e) => {
+                        setNextPaymentDate(e.target.value);
+                        updatePaymentDate(e.target.value);
+                      }}
+                      className="p-1 rounded-md text-black w-[70%] h-10 font-normal text-[1rem]"
+                      min={getTomorrowDate()} // tomorrow
+                      max={formatDate(bill?.dueDate)} // bill's due date
+                    />
+                  </>
+                )}
+                {/* Disable AutoPay Button */}
+                <Button
+                  onPress={enableAutoPay}
+                  className="bg-red-500 text-white p-3 shadow-lg rounded-md mt-4"
+                >
+                  Disable AutoPay
+                </Button>
+              </>
+            ) : (
+              <>
+                <RadioGroup value={autoPayEnabled ? "enabled" : "disabled"}>
+                  <FormControlLabel
+                    value="enabled"
+                    control={<Radio disabled />}
+                    label="AutoPay Enabled"
+                  />
+                  <FormControlLabel
+                    value="disabled"
+                    control={<Radio disabled />}
+                    label="AutoPay Disabled"
+                  />
+                </RadioGroup>
+                <Button
+                  onPress={enableAutoPay}
+                  className="bg-button-gpt text-white p-3 shadow-lg rounded-md mt-4"
+                >
+                  Enable AutoPay
+                </Button>
+              </>
+            )}
           </div>
 
           <div

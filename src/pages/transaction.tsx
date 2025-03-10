@@ -15,6 +15,7 @@ import { useAuth } from "@/context/AuthContext";
 import { DateTime } from "luxon";
 import { useToast } from "@/hooks/use-toast";
 import { loadStripe } from "@stripe/stripe-js";
+const stripeApiKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 
 const Transaction = () => {
   const { toast } = useToast();
@@ -45,10 +46,11 @@ const Transaction = () => {
     }
   }, [user, visibleItems]);
   const subtotal = calculateTotalBills();
-  const discount = savingsForBill.totalSavings;
+  const savings = savingsForBill.totalSavings;
+  const discount = subtotal * 0.03;
   const total = useMemo(() => {
-    return subtotal - creditApplied;
-  }, [subtotal, creditApplied]);
+    return subtotal + discount - creditApplied;
+  }, [subtotal, creditApplied, discount]);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -72,36 +74,41 @@ const Transaction = () => {
   };
 
   const makePayment = async () => {
-    const stripe = await loadStripe(
-      "pk_test_51L42JBBjhuRU5cGW2oXLq1IubYuai5huuBi0eMrODKEwvZDSe7KgTMWStEAxOVIcj9nPxWiaOvHEm7pEqhoa8vB400KVHlGKBY"
-    );
-    if (!stripe) {
-      return;
-    }
-    const apiUrl = "https://createbillscheckoutsession-5risxnudva-uc.a.run.app";
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sessionType: "billsPayment",
-        creditApplied: creditApplied,
-        userId: user?.id,
-        visibleItems: visibleItems,
-        subtotal: subtotal,
-        savings: discount,
-        total: total,
-        successUrl: `${window.location.origin}/dashboard`,
-        cancelUrl: `${window.location.origin}/dashboard`,
-      }),
-    });
+    try {
+      const stripe = await loadStripe(stripeApiKey);
+      if (!stripe) {
+        return;
+      }
+      const apiUrl =
+        "https://createbillscheckoutsession-5risxnudva-uc.a.run.app";
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sessionType: "billsPayment",
+          creditApplied: creditApplied,
+          userId: user?.id,
+          visibleItems: visibleItems,
+          subtotal: subtotal,
+          savings: savings,
+          total: total,
+          successUrl: `${window.location.origin}/dashboard`,
+          cancelUrl: `${window.location.origin}/dashboard`,
+        }),
+      });
 
-    const session = await response.json();
-    console.log(session);
-    const result = stripe.redirectToCheckout({ sessionId: session.sessionId });
-    if (result) {
-      console.log(result);
+      const session = await response.json();
+      console.log(session);
+      const result = stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+      if (result) {
+        console.log(result);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -377,23 +384,23 @@ const OrderSummary: React.FC<any> = ({
           </>
         )}
 
-        {/* <div className="flex items-center justify-between py-2 border-b border-gray-300">
-          <span className="text-lg text-gray-700">Savings Achieved</span>
+        <div className="flex items-center justify-between py-2 border-b border-gray-300">
+          <span className="text-lg text-gray-700">Processing fee</span>
           <span className="text-lg text-green-500">
             <CurrencyFormat
-              value={`-${
+              value={`+${
                 discount.toString().includes(".")
                   ? discount.toLocaleString(undefined, {
                       maximumFractionDigits: 2,
                     })
-                  : `{${discount}}.00`
+                  : `+{${discount}}.00`
               }`}
               displayType={"text"}
               thousandSeparator={true}
               prefix={"$"}
             />
           </span>
-        </div> */}
+        </div>
         {creditApplied > 0 && (
           <div className="flex items-center justify-between py-2 border-b border-gray-300">
             <span className="text-lg text-gray-700">Credit </span>

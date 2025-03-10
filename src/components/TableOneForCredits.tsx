@@ -1,131 +1,87 @@
 import { Tooltip } from "@mui/material";
 import React from "react";
-// Define the type for a single credit document
 import CurrencyFormat from "react-currency-format";
 
+// Define the type for a single credit document
 interface CreditDoc {
   credits: number;
-  date: {
-    seconds: number;
-    nanoseconds: number;
-  };
+  date: { seconds: number; nanoseconds: number };
   reference: string;
   status: string;
   type: string;
   userId: string;
 }
+
 interface TableCreditsProps {
   creditDocs: CreditDoc[];
 }
+
 const TableCredits: React.FC<TableCreditsProps> = ({ creditDocs }) => {
   console.log("Credits Data:", creditDocs);
+
   return (
-    <div className="rounded-[10px] bg-white px-7.5 pb-4 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card">
-      <h4 className="mb-10 font-bold text-body-2xlg text-dark dark:text-white">
+    <div className="rounded-lg bg-white px-6 pb-4 pt-6 shadow-md dark:bg-gray-dark dark:shadow-md">
+      <h4 className="mb-6 font-bold text-lg text-dark dark:text-white text-center">
         Credits History
       </h4>
 
       {creditDocs.length > 0 ? (
-        <div className="flex flex-col">
-          {/* Table Headers */}
-          <div className="grid grid-cols-5 text-button-gpt">
-            <div className="px-2 pb-3.5 text-center">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
+        <>
+          {/* ✅ Desktop Table Layout */}
+          <div className="hidden md:block">
+            <div className="grid grid-cols-5 text-button-gpt border-b border-gray-300 pb-3">
+              <h5 className="text-sm font-medium text-center uppercase">
                 Date
               </h5>
-            </div>
-
-            <div className="px-2 pb-3.5 text-center">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <h5 className="text-sm font-medium text-center uppercase">
                 Reference
               </h5>
-            </div>
-            <div className="px-2 pb-3.5 text-center">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <h5 className="text-sm font-medium text-center uppercase">
                 Type
               </h5>
-            </div>
-            <div className="px-2 pb-3.5">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <h5 className="text-sm font-medium text-center uppercase">
                 Credit Amount
               </h5>
-            </div>
-            <div className="px-2 pb-3.5 text-center">
-              <h5 className="text-sm font-medium uppercase xsm:text-base">
+              <h5 className="text-sm font-medium text-center uppercase">
                 Status
               </h5>
             </div>
-          </div>
 
-          {/* Table Rows */}
-          {creditDocs.map((credit, key) => (
-            <div
-              className={`grid grid-cols-5 ${
-                key === creditDocs.length - 1
-                  ? ""
-                  : "border-b border-stroke dark:border-dark-3"
-              }`}
-              key={key}
-            >
-              {/* Date */}
-              <div className="flex items-center justify-center px-2 py-4">
-                <p className="font-medium text-dark dark:text-white">
+            {creditDocs.map((credit, key) => (
+              <div
+                className={`grid grid-cols-5 text-center py-3 ${
+                  key === creditDocs.length - 1
+                    ? ""
+                    : "border-b border-gray-300"
+                }`}
+                key={key}
+              >
+                <p className="text-gray-700 dark:text-white">
                   {new Date(credit.date.seconds * 1000).toLocaleDateString()}
                 </p>
-              </div>
 
-              {/* Reference */}
-              <div className="flex items-center justify-center px-2 py-4">
-                <Tooltip title={credit.reference}
-                
-                
-                arrow
-  componentsProps={{
-    tooltip: {
-      sx: {
-        bgcolor: '#10a37f',
-        '& .MuiTooltip-arrow': {
-          color: 'common.black',
-        },
-      },
-    },
-  }}
-                >
-                <p className="font-medium text-dark dark:text-white">
-                  {truncateString(credit.reference, 15)}
-                </p></Tooltip>
-              </div>
-              {/* Type */}
-              <div className="flex items-center justify-center px-2 py-4">
-                <p className="font-medium text-dark dark:text-white">
-                  {credit.type}
-                </p>
-              </div>
-              {/* Credit Amount */}
-              <div className="flex justify-center items-center mr-5 gap-3.5 px-2 py-4">
+                <Tooltip title={credit.reference} arrow>
+                  <p className="text-gray-700 dark:text-white">
+                    {truncateString(credit.reference, 15)}
+                  </p>
+                </Tooltip>
+
+                <p className="text-gray-700 dark:text-white">{credit.type}</p>
+
                 <p
-                  className="font-medium text-dark dark:text-white"
-                  style={{
-                    color: `${credit.credits > 0 ? "green" : "red"}`,
-                  }}
+                  className="font-semibold"
+                  style={{ color: credit.credits > 0 ? "green" : "red" }}
                 >
                   <CurrencyFormat
-                    value={`${
-                      credit.credits?.toString().includes(".")
-                        ? credit.credits.toLocaleString(undefined, {
-                            maximumFractionDigits: 2,
-                          })
-                        : `${credit.credits}.00`
-                    }`}
+                    value={`${credit.credits.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}`}
                     displayType={"text"}
                     thousandSeparator={true}
                     prefix={"$"}
                   />
                 </p>
-              </div>
 
-              {/* Status */}
-              <div className="flex items-center justify-center px-2 py-4">
                 <p
                   className={`font-medium ${
                     credit.status === "Completed"
@@ -136,12 +92,75 @@ const TableCredits: React.FC<TableCreditsProps> = ({ creditDocs }) => {
                   {credit.status}
                 </p>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          {/* ✅ Mobile Column Layout */}
+          <div className="md:hidden flex flex-col gap-4">
+            {creditDocs.map((credit, key) => (
+              <div
+                key={key}
+                className="p-4 bg-gray-100 dark:bg-gray-800 rounded-md shadow-sm"
+              >
+                <div className="flex justify-between">
+                  <span className="text-gray-500 text-sm">Date:</span>
+                  <span className="text-gray-900 dark:text-white">
+                    {new Date(credit.date.seconds * 1000).toLocaleDateString()}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500 text-sm">Reference:</span>
+                  <Tooltip title={credit.reference} arrow>
+                    <span className="text-gray-900 dark:text-white">
+                      {truncateString(credit.reference, 15)}
+                    </span>
+                  </Tooltip>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500 text-sm">Type:</span>
+                  <span className="text-gray-900 dark:text-white">
+                    {credit.type}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500 text-sm">Credit Amount:</span>
+                  <span
+                    className="font-semibold"
+                    style={{ color: credit.credits > 0 ? "green" : "red" }}
+                  >
+                    <CurrencyFormat
+                      value={`${credit.credits.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                      })}`}
+                      displayType={"text"}
+                      thousandSeparator={true}
+                      prefix={"$"}
+                    />
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-500 text-sm">Status:</span>
+                  <span
+                    className={`font-medium ${
+                      credit.status === "Completed"
+                        ? "text-green-600"
+                        : "text-yellow-500"
+                    }`}
+                  >
+                    {credit.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       ) : (
-        <p className="text-center text-black dark:text-white">
-          No documents available
+        <p className="text-center text-gray-700 dark:text-white">
+          No credit transactions available.
         </p>
       )}
     </div>
@@ -150,6 +169,7 @@ const TableCredits: React.FC<TableCreditsProps> = ({ creditDocs }) => {
 
 export default TableCredits;
 
+/* Truncate Long Reference Strings */
 function truncateString(str: string, maxLength: number) {
   return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
 }

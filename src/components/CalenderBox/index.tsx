@@ -50,196 +50,204 @@ const CalendarBox = () => {
     if (daysEarly >= 1) return 2;
     return 0;
   };
+  const today = new Date();
+  const todayDay = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
+  const getDaysLeft = (billDay: number): number => {
+    const billMonth = currentDate.getMonth();
+
+    if (billMonth === todayMonth) {
+      return billDay - todayDay;
+    }
+
+    let daysLeft = 0;
+    const daysInCurrentMonth = new Date(todayYear, todayMonth + 1, 0).getDate();
+    daysLeft = daysInCurrentMonth - todayDay;
+
+    for (let m = todayMonth + 1; m < billMonth; m++) {
+      daysLeft += new Date(todayYear, m + 1, 0).getDate();
+    }
+
+    daysLeft += billDay;
+    return Math.max(daysLeft, 0);
+  };
 
   return (
     <>
-      <div className="w-full overflow-x-auto">
-        <div className="min-w-[800px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
-          <div className="flex flex-wrap justify-between items-center p-4 text-white bg-button-gpt-hover rounded-t-[10px]">
-            <div className="flex gap-2">
-              <button
-                className="px-3 py-1 rounded bg-button-gpt hover:bg-opacity-90"
-                onClick={() => navigateYear(-1)}
-              >
-                « Year
-              </button>
-              <button
-                className="px-3 py-1 rounded bg-button-gpt hover:bg-opacity-90"
-                onClick={() => navigateMonth(-1)}
-              >
-                « Month
-              </button>
-            </div>
-            <span className="text-lg font-medium whitespace-nowrap">
-              {currentDate.toLocaleString("default", { month: "long" })}{" "}
-              {currentDate.getFullYear()}
-            </span>
-            <div className="flex gap-2">
-              <button
-                className="px-3 py-1 rounded bg-button-gpt hover:bg-opacity-90"
-                onClick={() => navigateMonth(1)}
-              >
-                Month »
-              </button>
-              <button
-                className="px-3 py-1 rounded bg-button-gpt hover:bg-opacity-90"
-                onClick={() => navigateYear(1)}
-              >
-                Year »
-              </button>
-            </div>
-          </div>
-
-          <table className="w-full">
-            <thead>
-              <tr className="grid grid-cols-7 text-white bg-primary">
-                {[
-                  "Sunday",
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday",
-                  "Saturday",
-                ].map((day, index) => (
-                  <th
-                    key={index}
-                    className="flex items-center justify-center p-1 font-medium bg-button-gpt h-15 text-body-xs sm:text-base xl:p-5"
-                  >
-                    <span className="hidden lg:block">{day}</span>
-                    <span className="block lg:hidden">{day.slice(0, 3)}</span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                ...Array(Math.ceil((totalDaysInMonth + firstDayOfWeek) / 7)),
-              ].map((_, rowIndex) => (
-                <tr key={rowIndex} className="grid grid-cols-7">
-                  {[...Array(7)].map((_, colIndex) => {
-                    const day = rowIndex * 7 + colIndex - firstDayOfWeek + 1;
-                    if (day > 0 && day <= totalDaysInMonth) {
-                      const markedBill =
-                        upcomingBills[currentYear] &&
-                        upcomingBills[currentYear][currentMonth]
-                          ? upcomingBills[currentYear][currentMonth].find(
-                              (bill) => bill.day === day
-                            )
-                          : null;
-
-                      const isMarked = !!markedBill;
-                      const isUnpaid = markedBill?.status === "unpaid";
-                      const isPending = markedBill?.status === "pending";
-                      const today = new Date();
-                      const currentDate = today.getDate();
-                      const currentMonthIndex = today.getMonth();
-                      // const currentYear = today.getFullYear();
-                      console.log(currentMonth);
-                      // Determine if the `day` belongs to the next month
-                      const isNextMonth =
-                        currentMonthIndex !== Number(currentMonth);
-
-                      // If the bill is in the next month, calculate days remaining correctly
-                      let daysLeft;
-                      if (isNextMonth) {
-                        const lastDayOfCurrentMonth = new Date(
-                          currentYear,
-                          currentMonthIndex + 1,
-                          0
-                        ).getDate();
-                        daysLeft = lastDayOfCurrentMonth - currentDate + day;
-                      } else {
-                        daysLeft = day - currentDate;
-                      }
-
-                      // Ensure `daysLeft` is always a positive number
-                      daysLeft = Math.max(daysLeft, 0);
-
-                      const savings = calculateSavingsPercentage(daysLeft);
-
-                      // const daysLeft = day - new Date().getDate();
-                      // const savings = calculateSavingsPercentage(daysLeft);
-
-                      return (
-                        <td
-                          key={colIndex}
-                          className={`relative h-24 p-1 transition duration-500 border cursor-pointer ease border-stroke hover:bg-gray-2 dark:border-dark-3 dark:hover:bg-dark-2 md:h-25 md:p-6 xl:h-31 ${
-                            isMarked
-                              ? (isUnpaid
-                                  ? "bg-button-red"
-                                  : isPending
-                                  ? "bg-button-yellow"
-                                  : "bg-button-gpt") + " text-white"
-                              : "bg-transparent"
-                          }`}
-                          onMouseEnter={() => isUnpaid && setHoveredDay(day)}
-                          onMouseLeave={() => setHoveredDay(null)}
-                        >
-                          {isMarked ? (
-                            <div
-                              className="absolute left-2 top-3 z-99 flex w-[300%] flex-col rounded-r-[5px] border-l-[3px] border-white px-3 py-1 text-left dark:bg-dark-2 md:w-[290%] md:mb-10 md:group-hover:visible md:group-hover:opacity-100 cursor-pointer"
-                              onClick={() => navigate("/bills")}
-                            >
-                              {hoveredDay === day ? (
-                                <>
-                                  <span className="event-name font-sm text-dark dark:text-white">
-                                    {`Days Left: ${
-                                      daysLeft > 0 ? daysLeft : "Due Today"
-                                    }`}
-                                  </span>
-                                  <span>
-                                    {`Savings : ${savings > 0 ? savings : "0"}`}
-                                    %
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="event-name font-sm text-dark dark:text-white">
-                                    {`Bill: ${truncateString(
-                                      markedBill?.name,
-                                      15
-                                    )}`}
-                                  </span>
-                                  <span className="event-name font-sm text-dark dark:text-white">
-                                    {`Amount: `}
-                                    <CurrencyFormat
-                                      value={`${
-                                        markedBill?.amount
-                                          .toString()
-                                          .includes(".")
-                                          ? markedBill.amount.toLocaleString(
-                                              undefined,
-                                              {
-                                                maximumFractionDigits: 2,
-                                              }
-                                            )
-                                          : `${markedBill.amount}.00`
-                                      }`}
-                                      displayType={"text"}
-                                      thousandSeparator={true}
-                                      prefix={"$"}
-                                    />
-                                  </span>
-                                  <span className="event-name font-sm text-dark dark:text-white">{`Day: ${day}`}</span>
-                                </>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="font-medium text-dark dark:text-white">
-                              {day}
-                            </span>
-                          )}
-                        </td>
-                      );
-                    }
-                    return <td key={colIndex}></td>;
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Top Navigation */}
+      <div className="flex justify-between items-center bg-button-gpt-hover text-white p-4 rounded-t-lg flex-wrap">
+        <div className="flex gap-2">
+          <button
+            onClick={() => navigateYear(-1)}
+            className="bg-button-gpt px-3 py-1 rounded"
+          >
+            « Year
+          </button>
+          <button
+            onClick={() => navigateMonth(-1)}
+            className="bg-button-gpt px-3 py-1 rounded"
+          >
+            « Month
+          </button>
         </div>
+        <div className="text-lg font-medium mt-2 sm:mt-0">
+          {currentDate.toLocaleString("default", { month: "long" })}{" "}
+          {currentYear}
+        </div>
+        <div className="flex gap-2 mt-2 sm:mt-0">
+          <button
+            onClick={() => navigateMonth(1)}
+            className="bg-button-gpt px-3 py-1 rounded"
+          >
+            Month »
+          </button>
+          <button
+            onClick={() => navigateYear(1)}
+            className="bg-button-gpt px-3 py-1 rounded"
+          >
+            Year »
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop View: Table */}
+      <div className="hidden md:block">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="grid grid-cols-7 bg-button-gpt text-white">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+                (day, idx) => (
+                  <th key={idx} className="text-center p-2 font-medium">
+                    {day}
+                  </th>
+                )
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({
+              length: Math.ceil((totalDaysInMonth + firstDayOfWeek) / 7),
+            }).map((_, rowIndex) => (
+              <tr key={rowIndex} className="grid grid-cols-7">
+                {Array.from({ length: 7 }).map((_, colIndex) => {
+                  const day = rowIndex * 7 + colIndex - firstDayOfWeek + 1;
+
+                  if (day > 0 && day <= totalDaysInMonth) {
+                    const markedBill = upcomingBills?.[currentYear]?.[
+                      currentMonth
+                    ]?.find((b) => b.day === day);
+                    const isMarked = !!markedBill;
+                    const isUnpaid = markedBill?.status === "unpaid";
+                    const isPending = markedBill?.status === "pending";
+                    const daysLeft = getDaysLeft(day);
+                    const savings = calculateSavingsPercentage(daysLeft);
+
+                    return (
+                      <td
+                        key={colIndex}
+                        className={`relative border border-stroke h-24 p-2 md:p-4 text-sm text-center ${
+                          isMarked
+                            ? isUnpaid
+                              ? "bg-button-red text-white"
+                              : isPending
+                              ? "bg-button-yellow text-white"
+                              : "bg-button-gpt text-white"
+                            : ""
+                        }`}
+                        onMouseEnter={() => isUnpaid && setHoveredDay(day)}
+                        onMouseLeave={() => setHoveredDay(null)}
+                      >
+                        {hoveredDay === day && isMarked ? (
+                          <div
+                            className=" z-10 bg-black p-2 rounded shadow-lg text-left cursor-pointer"
+                            onClick={() => {
+                              navigate("/bills");
+                            }}
+                          >
+                            <p>Days Left: {daysLeft}</p>
+                            <p>Savings: {savings}%</p>
+                          </div>
+                        ) : isMarked ? (
+                          <div
+                            className="cursor-pointer"
+                            onClick={() => {
+                              navigate("/bills");
+                            }}
+                          >
+                            <span className="font-medium">{day}</span>
+                            <p>Bill: {markedBill.name}</p>
+                            <p>
+                              Amount:{" "}
+                              <CurrencyFormat
+                                value={markedBill.amount}
+                                displayType={"text"}
+                                thousandSeparator
+                                prefix={"$"}
+                              />
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <span className="font-medium">{day}</span>
+                          </>
+                        )}
+                      </td>
+                    );
+                  }
+
+                  return <td key={colIndex}></td>;
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile View: Card Grid */}
+      <div className="block md:hidden mt-5 px-2">
+        {upcomingBills?.[currentYear]?.[currentMonth]?.length ? (
+          upcomingBills[currentYear][currentMonth].map((bill) => {
+            const isMarked = !!bill;
+            const isUnpaid = bill?.status === "unpaid";
+            const isPending = bill?.status === "pending";
+            const daysLeft = getDaysLeft(bill.day);
+            const savings = calculateSavingsPercentage(daysLeft);
+
+            return (
+              <div
+                key={bill.name}
+                className={`mb-4 p-4 rounded-lg shadow-md ${
+                  isMarked
+                    ? isUnpaid
+                      ? "bg-button-red text-white"
+                      : isPending
+                      ? "bg-button-yellow text-white"
+                      : "bg-button-gpt text-white"
+                    : ""
+                }`}
+              >
+                <p className="text-lg font-semibold">{bill.name}</p>
+                <p className="text-sm">
+                  Amount:{" "}
+                  <CurrencyFormat
+                    value={bill.amount}
+                    displayType={"text"}
+                    thousandSeparator
+                    prefix={"$"}
+                  />
+                </p>
+                <p className="text-sm">Due Day: {bill.day}</p>
+                <p className="text-sm">Days Left: {daysLeft}</p>
+                <p className="text-sm">Savings: {savings}%</p>
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-center text-gray-600">
+            No upcoming bills for this month.
+          </p>
+        )}
       </div>
     </>
   );
@@ -247,9 +255,9 @@ const CalendarBox = () => {
 
 export default CalendarBox;
 
-function truncateString(str: string, maxLength: number) {
-  return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
-}
+// function truncateString(str: string, maxLength: number) {
+//   return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+// }
 
 interface Bill {
   name: string;

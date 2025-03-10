@@ -9,7 +9,7 @@ const RewardTracker = () => {
   const { user } = useAuth();
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-hidden md:pb-50">
       <div className="flex flex-col items-center justify-center px-4 py-16 bg-button-gpt-hover">
         <h2 className="mb-6 text-3xl font-semibold text-white sm:text-4xl">
           Credits Tracker
