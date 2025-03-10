@@ -22,6 +22,7 @@ import { db } from "@/lib/firebaseConfig";
 import { doc, updateDoc } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 const Colors = [
   "#76D7C4",
   "#48C9B0",
@@ -63,6 +64,10 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
   console.log(bill?.nextPaymentDate);
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const dueDateMoment = moment(bill?.dueDate.split("T")[0]).format(
+    "YYYY-MM-DD"
+  );
 
   const getPaymentDate = (dueDate: any) => {
     const today = new Date();
@@ -272,7 +277,7 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
               wordWrap: "break-word",
             }}
           >
-            {bill?.dueDate.split("T")[0]}
+            {moment(dueDateMoment).format("MM-DD-YYYY")}
           </div>
           <div
             className="DueLabel"
