@@ -9,12 +9,14 @@ import {
 } from "@mui/material";
 import CurrencyFormat from "react-currency-format";
 import { Button } from "@nextui-org/button";
+import { Switch, FormControlLabel } from "@mui/material";
 
 import { useBillPaymentContext } from "@/context/paymentBillsContext";
 import { useAuth } from "@/context/AuthContext";
 import { DateTime } from "luxon";
 import { useToast } from "@/hooks/use-toast";
 import { loadStripe } from "@stripe/stripe-js";
+import moment from "moment";
 const stripeApiKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 
 const Transaction = () => {
@@ -24,13 +26,10 @@ const Transaction = () => {
     useBillPaymentContext();
   const [visibleItems, setVisibleItems] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [availableCredits, setAvailableCredits] = useState(
-    user?.availableCredits || 0
-  );
-  console.log(setAvailableCredits);
+  const [availableCredits] = useState(user?.availableCredits || 0);
   const [creditInput, setCreditInput] = useState(0);
   const [creditApplied, setCreditApplied] = useState(0);
-
+  const [autoPayIds, setAutoPayIds] = useState([]);
   useEffect(() => {
     setVisibleItems(selectedBills);
   }, [selectedBills]);
@@ -94,6 +93,8 @@ const Transaction = () => {
           subtotal: subtotal,
           savings: savings,
           total: total,
+          customerId: user.stripeCustomerId,
+          autoPayIds: autoPayIds,
           successUrl: `${window.location.origin}/dashboard`,
           cancelUrl: `${window.location.origin}/dashboard`,
         }),
@@ -141,6 +142,7 @@ const Transaction = () => {
             <div className="w-full space-y-4 overflow-y-auto h-80 custom-scrollbar">
               {visibleItems.map((bill) => (
                 <CartItem
+                  productId={bill.id}
                   key={bill.id}
                   productName={bill.name}
                   productPrice={bill.amount}
@@ -150,9 +152,8 @@ const Transaction = () => {
                     removeBill(bill.id);
                   }}
                   selected={false}
-                  onClick={() =>
-                    console.log(`Item with ID ${bill.id} clicked.`)
-                  }
+                  setAutoPay={setAutoPayIds}
+                  autoPayIds={autoPayIds}
                 />
               ))}
             </div>
@@ -168,6 +169,7 @@ const Transaction = () => {
               unifiedDueDate={savingsForBill.unifiedDueDate}
               percentageApplied={savingsForBill.percentageApplied}
               makePayment={makePayment}
+              savings={savingsForBill.totalSavings}
             />
           </div>
         </div>
@@ -254,6 +256,7 @@ const Transaction = () => {
 export default Transaction;
 // CartItem Component
 const CartItem: React.FC<any> = ({
+  productId,
   productName,
   productPrice,
   productStatus,
@@ -261,14 +264,30 @@ const CartItem: React.FC<any> = ({
   onRemove,
   selected,
   onClick,
+  setAutoPay,
+  autoPayIds,
 }) => {
-  const errors = [];
+  const errors: string[] = [];
   const date = dueDate ? DateTime.fromISO(dueDate) : null;
   const today = DateTime.now();
+
   if (date && today > date) {
     errors.push("The payment is past the due date.");
   }
-  // console.log(errors);
+
+  const isAutoPayEnabled = autoPayIds.includes(productId);
+
+  const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation(); // prevent triggering onClick from parent
+
+    setAutoPay((prev: string[]) => {
+      if (prev.includes(productId)) {
+        return prev.filter((id) => id !== productId);
+      } else {
+        return [...prev, productId];
+      }
+    });
+  };
 
   return (
     <div
@@ -283,28 +302,41 @@ const CartItem: React.FC<any> = ({
             {productName}
           </h3>
           <p className="mt-2 text-gray-600">{productStatus}</p>
-          <div className="flex justify-between mt-6">
+
+          <div className="flex justify-between items-center mt-4">
             <span className="text-2xl font-bold text-button-gpt">
               <CurrencyFormat
-                value={`${
-                  productPrice.toString().includes(".")
-                    ? productPrice.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
-                      })
-                    : `{${productPrice}}.00`
-                }`}
+                value={Number(productPrice).toFixed(2)}
                 displayType={"text"}
                 thousandSeparator={true}
                 prefix={"$"}
               />
             </span>
+
             <button
-              onClick={onRemove}
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove();
+              }}
               className="px-3 py-1 mr-3 text-white rounded-md bg-button-gpt hover:bg-red-600"
             >
               Remove
             </button>
           </div>
+
+          <div className="flex items-center mt-3">
+            <FormControlLabel
+              label="Enable AutoPay"
+              control={
+                <Switch
+                  checked={isAutoPayEnabled}
+                  onChange={handleToggle}
+                  color="success"
+                />
+              }
+            />
+          </div>
+
           {errors.length > 0 && (
             <div className="mt-4 text-red-600">
               {errors.map((error, index) => (
@@ -321,18 +353,15 @@ const CartItem: React.FC<any> = ({
 const OrderSummary: React.FC<any> = ({
   visibleItems,
   subtotal,
-  discount,
+  // discount,
   total,
   creditApplied,
   unifiedDueDate,
   percentageApplied,
   makePayment,
+  savings,
 }) => {
-  console.log(discount);
   const [isLoading, setIsLoading] = useState(false);
-  // console.log(visibleItems);
-  // Convert unifiedDueDate to a DateTime object for comparison
-
   // Determine error messages
   const errors: string[] = [];
   if (visibleItems.length >= 2 && total < 100) {
@@ -367,15 +396,30 @@ const OrderSummary: React.FC<any> = ({
         {unifiedDueDate && (
           <div className="flex items-center justify-between py-2 border-b border-gray-300">
             <span className="text-lg text-gray-700">Due Date</span>
-            <span className="text-lg text-gray-800">{unifiedDueDate}</span>
+            <span className="text-lg text-gray-800">
+              {moment(unifiedDueDate).format("MM-DD-YYYY")}
+            </span>
           </div>
         )}
         {percentageApplied !== 0 && (
           <>
             <div className="flex items-center justify-between py-2 border-b border-gray-300">
-              <span className="text-lg text-gray-700">Savings Applied</span>
-              <span className="text-lg text-gray-800">
-                {percentageApplied}%
+              <span className="text-lg text-green-500">Savings Applied</span>
+              <span className="text-lg text-green-500">
+                {percentageApplied}% &nbsp; (
+                <CurrencyFormat
+                  value={`${
+                    savings.toString().includes(".")
+                      ? savings.toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                        })
+                      : `+{${savings}}.00`
+                  }`}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  prefix={"$"}
+                />
+                )
               </span>
             </div>
             <span className="text-lg text-green-500">
@@ -386,8 +430,8 @@ const OrderSummary: React.FC<any> = ({
 
         <div className="flex items-center justify-between py-2 border-b border-gray-300">
           <span className="text-lg text-gray-700">Processing fee</span>
-          <span className="text-lg text-green-500">
-            <CurrencyFormat
+          <span className="text-lg text-black">
+            {/* <CurrencyFormat
               value={`+${
                 discount.toString().includes(".")
                   ? discount.toLocaleString(undefined, {
@@ -398,7 +442,8 @@ const OrderSummary: React.FC<any> = ({
               displayType={"text"}
               thousandSeparator={true}
               prefix={"$"}
-            />
+            /> */}
+            3%
           </span>
         </div>
         {creditApplied > 0 && (

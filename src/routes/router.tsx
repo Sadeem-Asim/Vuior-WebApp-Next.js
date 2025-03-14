@@ -14,7 +14,7 @@ import RegisterUser from "../pages/register-user";
 import ForgetPassword from "../pages/forget-password";
 import DashboardHome from "../pages/dashboardHome";
 import PayEarly from "../pages/payEarly";
-import SetupAutoPay from "@/pages/setupAutoPay";
+// import SetupAutoPay from "@/pages/setupAutoPay";
 import Transaction from "../pages/transaction";
 // import ResetPassword from "../pages/reset-pasword";
 import OpenPositions from "../pages/open-positions";
@@ -39,12 +39,12 @@ import CreateBill from "../components/ui/billForm/form";
 
 import PaymentHistory from "../pages/payments-history";
 import DocumentPage from "@/pages/documents";
-const stripeApiKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+// const stripeApiKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
+// import { Elements } from "@stripe/react-stripe-js";
 // import DashboardSettings from "../pages/DashboardSettings"
-const stripePromise = loadStripe(stripeApiKey);
+// const stripePromise = loadStripe(stripeApiKey);
 
 export const router = createBrowserRouter([
   {
@@ -191,24 +191,24 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: "setupAutoPay",
-    element: (
-      <ProtectedRoute>
-        <DashboardLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        index: true,
-        element: (
-          <Elements stripe={stripePromise}>
-            <SetupAutoPay />
-          </Elements>
-        ),
-      },
-    ],
-  },
+  // {
+  //   path: "setupAutoPay",
+  //   element: (
+  //     <ProtectedRoute>
+  //       <DashboardLayout />
+  //     </ProtectedRoute>
+  //   ),
+  //   children: [
+  //     {
+  //       index: true,
+  //       element: (
+  //         <Elements stripe={stripePromise}>
+  //           <SetupAutoPay />
+  //         </Elements>
+  //       ),
+  //     },
+  //   ],
+  // },
 
   {
     path: "transaction",

@@ -98,10 +98,7 @@ const Transaction = ({ add }: any) => {
 
   const makePayment = async () => {
     if (!stripeApiKey) return;
-    const stripe = await loadStripe(
-      stripeApiKey
-      // "pk_test_51L42JBBjhuRU5cGW2oXLq1IubYuai5huuBi0eMrODKEwvZDSe7KgTMWStEAxOVIcj9nPxWiaOvHEm7pEqhoa8vB400KVHlGKBY"
-    );
+    const stripe = await loadStripe(stripeApiKey);
 
     if (!stripe || !user) {
       return;

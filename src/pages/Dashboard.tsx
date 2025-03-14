@@ -33,11 +33,11 @@ const Dashboard = () => {
           </div>
 
           <div className="flex gap-3 justify-start mt-4 md:mt-0">
-            <Button
+            {/* <Button
               children="Setup AutoPay"
               className="w-full md:w-auto bg-button-gpt text-white px-5 py-2 rounded-md"
               onClick={() => navigate("/setupAutoPay")}
-            />
+            /> */}
             <Button
               children="Pay Early"
               className="w-full md:w-auto bg-button-gpt text-white px-5 py-2 rounded-md"

@@ -22,6 +22,7 @@ import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { storage } from "@/lib/firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import CurrencyFormat from "react-currency-format";
 type ContactUsFormData = z.infer<typeof ContactUsSchema>;
 
 const ContactForm = () => {
@@ -29,7 +30,6 @@ const ContactForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useAuth();
   const [uDoc, setUDoc] = useState<any>(null);
-
   const form = useForm<ContactUsFormData>({
     resolver: zodResolver(ContactUsSchema),
     defaultValues: {
@@ -48,20 +48,26 @@ const ContactForm = () => {
     handleSubmit,
     reset,
     register,
+    setValue,
     formState: { errors },
   } = form;
   const handleFileUpload = (event: any) => {
     setUDoc(event.target.files[0]);
   };
-
   const onSubmit = async (values: ContactUsFormData) => {
-    setIsLoading(true);
-    const docRef = ref(storage, `docs/${uDoc.name}`);
-    const snapshot = await uploadBytes(docRef, uDoc);
-    console.log("Uploaded a doc!");
-    // Get the download URL
-    const docUrl = await getDownloadURL(snapshot.ref);
     try {
+      setIsLoading(true);
+
+      let docUrl = "";
+
+      // Only upload if file exists
+      if (uDoc) {
+        const docRef = ref(storage, `docs/${uDoc.name}`);
+        const snapshot = await uploadBytes(docRef, uDoc);
+        console.log("Uploaded a doc!");
+        docUrl = await getDownloadURL(snapshot.ref);
+      }
+
       const formData = {
         subject: `New Contact Us Message Received from ${values.email}`,
         name: values.name,
@@ -80,13 +86,41 @@ const ContactForm = () => {
       const email = "info@vuior.com";
       const url = `https://api.bird.com/workspaces/${workspaceId}/channels/${channelId}/messages`;
 
+      const htmlBody = `
+        <p>New contact form message received!</p>
+        <ul>
+          <li><strong>Name:</strong> ${formData.name}</li>
+          <li><strong>Email:</strong> ${formData.email}</li>
+          <li><strong>Phone:</strong> ${formData.phone}</li>
+          <li><strong>Subject:</strong> ${formData.subjectLine}</li>
+          <li><strong>Message:</strong> ${formData.message}</li>
+          <li><strong>Promotional Messages:</strong> ${
+            formData.agreeToPromotionalMessages
+          }</li>
+        </ul>
+        ${
+          docUrl
+            ? `<div style="width:500px; background-color:#10a37f; text-align:center; justify-content:center; color:white; border-radius:05px;">
+                <a href="${docUrl}" style="color:white;">Click Here to Download</a>
+              </div>`
+            : ""
+        }
+      `;
+
+      const textBody = `
+        New contact form message received!
+        Name: ${formData.name}
+        Email: ${formData.email}
+        Phone: ${formData.phone}
+        Subject: ${formData.subjectLine}
+        Message: ${formData.message}
+        Promotional Messages: ${formData.agreeToPromotionalMessages}
+        ${docUrl ? `Document: ${docUrl}` : ""}
+      `;
+
       const data = {
         receiver: {
-          contacts: [
-            {
-              identifierValue: email,
-            },
-          ],
+          contacts: [{ identifierValue: email }],
         },
         body: {
           type: "html",
@@ -94,30 +128,8 @@ const ContactForm = () => {
             metadata: {
               subject: `Contact Us Message from ${formData.name}`,
             },
-            html: `
-            <p>New contact form message received!</p>
-            <ul>
-              <li><strong>Name:</strong> ${formData.name}</li>
-              <li><strong>Email:</strong> ${formData.email}</li>
-              <li><strong>Phone:</strong> ${formData.phone}</li>
-              <li><strong>Subject:</strong> ${formData.subjectLine}</li>
-              <li><strong>Message:</strong> ${formData.message}</li>
-              <li><strong>Promotional Messages:</strong> ${formData.agreeToPromotionalMessages}</li>
-            </ul>
-                 <div style="width:500px; background-color:#10a37f; text-align:center; justify-content:center; color:white; border-radius:05px;">
-              <a href="${docUrl}" style="color:white;">Click Here to Download</a>
-            </div>
-            `,
-            text: `
-              New contact form message received!
-              Name: ${formData.name}
-              Email: ${formData.email}
-              Phone: ${formData.phone}
-              Subject: ${formData.subjectLine}
-              Message: ${formData.message}
-              Promotional Messages: ${formData.agreeToPromotionalMessages}
-              Document: ${docUrl}
-            `,
+            html: htmlBody,
+            text: textBody,
           },
         },
       };
@@ -137,8 +149,6 @@ const ContactForm = () => {
       reset({});
     } catch (error) {
       console.log(error);
-      // console.error("Error sending message:", error.response?.data || error.message);
-
       toast({
         title: "Error",
         description: "Unable to send your message right now.",
@@ -217,18 +227,29 @@ const ContactForm = () => {
               name="phoneNumber"
               render={({ field }) => (
                 <FormItem>
-                  {/* <FormLabel>Subject</FormLabel> */}
                   <FormControl>
-                    <Input
-                      variant="bordered"
-                      size="md"
+                    <CurrencyFormat
+                      customInput={Input}
                       label="Phone Number"
-                      errorMessage={errors.phoneNumber?.message}
-                      isInvalid={!!errors.phoneNumber?.message}
+                      isInvalid={!!errors.phoneNumber}
+                      labelPlacement="outside"
+                      onValueChange={(value) => {
+                        setValue("phoneNumber", value.formattedValue); // Set the float value or an empty string if undefined
+                      }}
+                      {...register("phoneNumber", {
+                        required: "Please provide the phone number",
+                      })}
+                      radius="sm"
+                      type="text"
+                      variant="bordered"
+                      errorMessage={
+                        !!errors.phoneNumber &&
+                        "Please provide the phone number"
+                      }
+                      format="+1 (###) ###-####"
                       {...field}
                     />
                   </FormControl>
-                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />

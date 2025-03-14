@@ -10,7 +10,25 @@ import TotalOrderLineChartCard from "@/components/cards/totalOrderLineChartCard/
 import { Button } from "@nextui-org/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserAssets } from "@/context/userSpecificAssetsContext";
+import { db } from "@/lib/firebaseConfig";
+import { doc, updateDoc } from "firebase/firestore";
+const updateStripeCustomer = async (user: any) => {
+  const userRef = doc(db, "users", user.id);
+  let stripeCustomerId = user?.stripeCustomerId;
 
+  const response = await fetch(
+    "https://createstripecustomer-5risxnudva-uc.a.run.app",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, email: user.email }),
+    }
+  );
+
+  const session = await response.json();
+  stripeCustomerId = session.stripeCustomerId;
+  await updateDoc(userRef, { stripeCustomerId });
+};
 const DashboardHome = () => {
   console.log(React);
   const { user } = useAuth();
@@ -21,7 +39,11 @@ const DashboardHome = () => {
   useEffect(() => {
     // Preload any assets or data
     import("@/pages/creditTransaction");
-  }, []);
+
+    if (!user?.stripeCustomerId) {
+      updateStripeCustomer(user);
+    }
+  }, [user]);
 
   useEffect(() => {
     setLoading(false);

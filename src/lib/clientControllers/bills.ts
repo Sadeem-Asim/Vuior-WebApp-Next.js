@@ -30,6 +30,7 @@ interface Bill {
   pastDue?: any;
   accountNumber: any;
   isDeleted?: boolean;
+  autoPay?: boolean;
 }
 
 // Create a new bill in Firestore
@@ -37,6 +38,7 @@ const createBill = async (billData: Bill): Promise<string> => {
   try {
     billData.created_at = Timestamp.now();
     billData.updated_at = Timestamp.now();
+    billData.autoPay = false;
     billData.isDeleted = false;
 
     // Adding the bill document to Firestore

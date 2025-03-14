@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import BillCard from "@/components/cards/billCard";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, Checkbox, FormControlLabel } from "@mui/material";
 import Button from "@/components/button";
 import { ClipLoader } from "react-spinners";
 import { useBillPaymentContext } from "../context/paymentBillsContext";
@@ -37,23 +37,25 @@ const PayEarly = () => {
   const unPaidBills = useMemo(() => {
     return userBills.filter(
       (bill: { autoPay: boolean; status: string }) =>
-        bill.status !== "paid" && bill.autoPay === false
+        bill.status === "unpaid" && !bill.autoPay
     );
   }, [userBills]);
+
   // Update context whenever selectedBills changes
   useEffect(() => {
     addAllBillsOnce(selectedBills);
   }, [selectedBills, addAllBillsOnce]);
 
-  // Handle selecting or deselecting a bill
-  const handleCardClick = (bill: Bill) => {
-    setSelectedBills(
-      (prev) =>
-        prev.some((selectedBill) => selectedBill.id === bill.id)
-          ? prev.filter((selectedBill) => selectedBill.id !== bill.id) // Deselect
-          : [...prev, bill] // Select
+  const handleCheckboxChange = (bill: Bill) => {
+    setSelectedBills((prev) =>
+      prev.some((selectedBill) => selectedBill.id === bill.id)
+        ? prev.filter((selectedBill) => selectedBill.id !== bill.id)
+        : [...prev, bill]
     );
   };
+
+  const isSelected = (billId: string) =>
+    selectedBills.some((b) => b.id === billId);
 
   return (
     <div className="px-4">
@@ -92,13 +94,27 @@ const PayEarly = () => {
             {unPaidBills.map((bill: Bill) => (
               <Grid item key={bill.id}>
                 <div
-                  className={`rounded-xl cursor-pointer p-3 ${
-                    selectedBills.some((b) => b.id === bill.id)
+                  className={`rounded-xl p-3 w-full ${
+                    isSelected(bill.id)
                       ? "animate-glow transform scale-93 shadow-xl shadow-button-gpt transition-all"
                       : "transition-shadow transform"
                   }`}
-                  onClick={() => handleCardClick(bill)}
                 >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={isSelected(bill.id)}
+                        onChange={() => handleCheckboxChange(bill)}
+                        sx={{
+                          color: "#39b996",
+                          "&.Mui-checked": {
+                            color: "#39b996",
+                          },
+                        }}
+                      />
+                    }
+                    label=""
+                  />
                   <BillCard bill={bill} />
                 </div>
               </Grid>

@@ -315,12 +315,52 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
               wordWrap: "break-word",
             }}
           >
-            {bill?.status === "paid"
-              ? "paid"
-              : bill.autoPay === true
-              ? "AutoPay"
-              : "unpaid"}
+            {bill?.status}
           </div>
+          {bill.autoPay === true && (
+            <div
+              className="Date"
+              style={{
+                width: 86,
+                height: 13,
+                left: 30,
+                top: 80,
+                position: "absolute",
+                opacity: 0.9,
+                color: "white",
+                fontSize: 14,
+                fontFamily: "Rubik",
+                fontWeight: "500",
+                letterSpacing: 0.5,
+                wordWrap: "break-word",
+              }}
+            >
+              AutoPay
+            </div>
+          )}
+          {bill.autoPay === true && bill.nextPaymentDate && (
+            <div
+              className="Date"
+              style={{
+                width: 300,
+                height: 13,
+                left: 100,
+                top: 80,
+                position: "absolute",
+                opacity: 0.9,
+                color: "white",
+                fontSize: 14,
+                fontFamily: "Rubik",
+                fontWeight: "500",
+                letterSpacing: 0.5,
+                wordWrap: "break-word",
+              }}
+            >
+              NextPaymentDate:
+              {moment(bill.nextPaymentDate).format("MM-DD-YYYY")}
+            </div>
+          )}
+
           <div
             className="DueLabel"
             style={{
@@ -411,9 +451,9 @@ export default function FileRow({ indexC = 1, onClick, bill }: BillCardProps) {
               position: "absolute",
             }}
           >
-            <IconButton aria-label="flip" color="primary" onClick={handleFlip}>
+            {/* <IconButton aria-label="flip" color="primary" onClick={handleFlip}>
               <EastIcon />
-            </IconButton>
+            </IconButton> */}
           </div>
 
           <div

@@ -74,12 +74,10 @@ export const UserAssetsProvider = ({ children }) => {
 
       const today = DateTime.now().setZone(user.timeZone);
 
-      bills.forEach((bill) => {
-        const dueDate = DateTime.fromISO(bill.dueDate, { zone: user.timeZone });
-        const daysEarly = Math.floor(dueDate.diff(today, "days").days);
-
-        // console.log(daysEarly);
-      });
+      // bills.forEach((bill) => {
+      //   const dueDate = DateTime.fromISO(bill.dueDate, { zone: user.timeZone });
+      //   const daysEarly = Math.floor(dueDate.diff(today, "days").days);
+      // });
       dispatch({ type: "SET_ALL_BILLS", payload: bills });
     });
 
@@ -126,6 +124,7 @@ export const UserAssetsProvider = ({ children }) => {
           id: doc.id,
           ...doc.data(),
         }));
+
         dispatch({
           type: "SET_USER_PREVIOUS_TRANSACTIONS",
           payload: transactions,
