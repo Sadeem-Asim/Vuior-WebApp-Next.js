@@ -180,7 +180,7 @@ const Transaction = () => {
         open={isModalOpen}
         onClose={handleCloseModal}
         closeAfterTransition
-        className="flex items-center justify-center ml-48"
+        className="flex items-center justify-center "
       >
         <Fade in={isModalOpen}>
           <div className="p-6 bg-white rounded-lg shadow-xl w-96">
