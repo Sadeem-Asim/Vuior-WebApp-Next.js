@@ -223,9 +223,9 @@
 
 <div class="about-container" style="display: flex; gap: 30px; align-items: center;">
   <div class="about-content" style="flex: 1;">
-    <p><strong>Billing Manager Pro</strong> is an enterprise-grade billing system built with <code>Next.js</code>, <code>Tailwind</code>, and <code>Stripe</code>, offering modern UI, analytics, invoicing automation, and deep customization.</p> 
+    <p><strong>Vuior</strong> is an enterprise-grade billing system built with <code>Next.js</code>, <code>Tailwind</code>, and <code>Stripe</code>, offering modern UI, analytics, invoicing automation, and deep customization.</p> 
     <blockquote style="border-left: 4px solid #8B5CF6; padding-left: 20px; margin: 20px 0; color: #4B5563; font-style: italic;">
-      "Billing Manager Pro has transformed how we handle invoicing. What used to take hours now takes minutes."
+      "Vuior has transformed how we handle invoicing. What used to take hours now takes minutes."
       <footer>— Sarah Johnson, Freelance Designer</footer>
     </blockquote>
   </div>
@@ -273,11 +273,11 @@
   <div class="installation-steps" style="flex: 1;">
     <div class="step" style="margin-bottom: 15px;">
       <h4>1. Clone the repository</h4>
-      <pre style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; overflow-x: auto;"><code>git clone https://github.com/yourusername/billing-manager-pro.git</code></pre>
+      <pre style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; overflow-x: auto;"><code>git clone https://github.com/yourusername/vuior-WebApp-Next.js.git</code></pre>
     </div>
     <div class="step" style="margin-bottom: 15px;">
       <h4>2. Navigate to the project</h4>
-      <pre style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; overflow-x: auto;"><code>cd billing-manager-pro</code></pre>
+      <pre style="background-color: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 8px; overflow-x: auto;"><code>cd vuior-webApp-Next.js</code></pre>
     </div>
     <div class="step" style="margin-bottom: 15px;">
       <h4>3. Install dependencies</h4>
@@ -473,7 +473,7 @@
 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
   <div style="text-align: center; margin-bottom: 20px;">
     <h3>High-Level Architecture</h3>
-    <p>Billing Manager Pro follows a modern, scalable architecture</p>
+    <p>Vuior App follows a modern, scalable architecture</p>
   </div>
 
 ```mermaid
